@@ -31,9 +31,9 @@ class App():
         sg.theme("Reddit")
 
         #-----------------------------------------------------------------------------------------------
-        self.ML_KEY         = '-ML-'
+        
         self.trava_comands  = True
-        self.buttons_sizes  = (16 , 1)
+        self.buttons_sizes  = (5 , 2)
 
         #----------- Layouts ----------------------------------------------------------------------------
         self.one_layouts = [                        
@@ -43,23 +43,13 @@ class App():
                                                 background_color    = COLORS_APP["AZUL_ESCURO_SINZENTO"],
                                                 key                 = "_TEXT_01_" 
                                                 )],
+
+                            self.layoutButtons(   text_button = "PLUS" , 
+                                                    key_button  = "_BUTTON_PLUS_ADD_T_",
+                                                    button_type = 7 ,
+                                                    button_size = (5 , 2) ) 
+
                             
-
-                            [sg.Button(button_text               = "Procurar",
-                                            button_color         = ( COLORS_APP["AZUL_ESCURO_SINZENTO"], COLORS_APP["AZUL_CLARO"]) ,
-                                            button_type          = 1 ,
-                                            s                    = self.buttons_sizes , 
-                                            key                  = "_ADD_DATAS_PATH_",
-                                            border_width         = 0, 
-                                            )],
-
-                            [sg.Button(button_text              = "Adicionar na lista" ,
-                                            button_color            = ( COLORS_APP["AZUL_ESCURO_SINZENTO"], COLORS_APP["AZUL_CLARO"]) ,
-                                            key                     = "_ADDBOOK_", 
-                                            size                    = (17,1) ,
-                                            border_width            = 0,
-                                            #image_data              = base64.buttons_greens 
-                                        )]
                             ]
 
         #--------------------------------------------------------------------------------------------------------------------
