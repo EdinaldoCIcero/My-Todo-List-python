@@ -1,0 +1,6 @@
+1:    py -3 -m venv .venv
+2 :  .venv\scripts\activate
+
+Pra mim deu certo este comando no PowerShell:
+
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
