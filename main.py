@@ -11,18 +11,17 @@ from ast import literal_eval
 
 
 #-----------------------------------------------------------------------------------------------
-JSLOAD      = JsonClass()
+JSLOAD           = JsonClass()
 
-COLORS_APP  = JSLOAD.json_read(name_file = "database/app_colors" )
+COLORS_APP       = JSLOAD.json_read(name_file = "database/app_colors" )
+THEME_APP_COLORS = JSLOAD.json_read(name_file = "database/theme_app" )
 
-HEADINGS    = ["Noma das Tarefas"]
-
-LIST_MATRIZ = [  ]
+HEADINGS         = [ "-- Noma das Tarefas --" ] 
+LIST_MATRIZ      = []
 #-----------------------------------------------------------------------------------------------
 
-for i in range(20):
+for i in range(10):
     LIST_MATRIZ.append( [("tarefa_" + str(i) ) , "2:86" ] )
-
 
 
 
@@ -31,23 +30,19 @@ class App():
         sg.theme("Reddit")
 
         #-----------------------------------------------------------------------------------------------
-        
         self.trava_comands  = True
         self.buttons_sizes  = (5 , 2)
 
+        self.background_color = THEME_APP_COLORS["background"]
         #----------- Layouts ----------------------------------------------------------------------------
         self.one_layouts = [                        
                            
-                            [sg.Text("Nome file ", 
-                                                text_color          = 'white',
-                                                background_color    = COLORS_APP["AZUL_ESCURO_SINZENTO"],
-                                                key                 = "_TEXT_01_" 
-                                                )],
+                            #self.layoutText( text_str = "Titulo Project Name" , key_element = "_TEXT_")
 
-                            self.layoutButtons(   text_button = "PLUS" , 
-                                                    key_button  = "_BUTTON_PLUS_ADD_T_",
-                                                    button_type = 7 ,
-                                                    button_size = (5 , 2) ) 
+                            self.layoutButtons( text_button = "PLUS" , 
+                                                key_button  = "_BUTTON_PLUS_ADD_T_",
+                                                button_type = 7 ,
+                                                button_size = (5 , 2) ) 
 
                             
                             ]
@@ -70,16 +65,22 @@ class App():
 
 
         self.full_tables = [
+                            [sg.Canvas(size = ( 147 , 131 )) , sg.Canvas(size = ( 714 , 131 ))],
+
+                            self.layoutText( text_str = "Titulo Project Name" ),
+                            
+                            [sg.HSeparator() ],
+
                             [
-                                sg.Column( self.table_1     , background_color = COLORS_APP["AZUL_ESCURO_SINZENTO"] ) ,
-                                sg.Column( self.button_1    , background_color = COLORS_APP["AZUL_ESCURO_SINZENTO"] ) ,
+                                sg.Column( self.table_1     , background_color = self.background_color) ,
+                                sg.Column( self.button_1    , background_color = self.background_color ) ,
                                 
                                 #sg.VSeparator() ,
-                                sg.Column( self.table_2     , background_color = COLORS_APP["AZUL_ESCURO_SINZENTO"]  ),
-                                sg.Column( self.button_2    , background_color = COLORS_APP["AZUL_ESCURO_SINZENTO"] ) ,
+                                sg.Column( self.table_2     , background_color = self.background_color  ),
+                                sg.Column( self.button_2    , background_color = self.background_color ) ,
                                 
                                 #sg.VSeparator() ,
-                                sg.Column( self.table_3     , background_color = COLORS_APP["AZUL_ESCURO_SINZENTO"] ) ,
+                                sg.Column( self.table_3     , background_color = self.background_color ) ,
                             ]
 
 
@@ -90,16 +91,16 @@ class App():
         self.full_layouts = [ 
 
                             [
-                                sg.Column( self.one_layouts         , background_color = COLORS_APP["AZUL_ESCURO_SINZENTO"] ) ,
+                                sg.Column( self.one_layouts         , background_color = self.background_color ) ,
                                 sg.VSeparator() ,
-                                sg.Column( self.full_tables         , background_color = COLORS_APP["AZUL_ESCURO_SINZENTO"]  ) 
+                                sg.Column( self.full_tables         , background_color = self.background_color  ) 
                             ],
 
                             ]
 
         #--------------------------------------------------------------------------------------------------------------------
         self.windons  = sg.Window( "My-Tod-List",
-                                    background_color        = COLORS_APP["AZUL_ESCURO_SINZENTO"],
+                                    background_color        = self.background_color,
                                     size                    = (1024 , 600) ,
                                     #icon                = "Icon.ico",
                                     #titlebar_icon       = base64.icone , 
@@ -110,11 +111,18 @@ class App():
 
                                     ).layout(self.full_layouts)
 
+    def layoutText(self , text_str  , key_element = "_TEXT_"):
+        texts = [sg.Text( text_str , 
+                        text_color          = COLORS_APP["BRANCO_1"],
+                        background_color    = self.background_color,
+                        key                 = key_element 
+                        )]
+        return texts        
 
     #--------------------------------------------------------------------------------------------------------------------
     def layoutButtons(self , text_button , key_button , button_type , button_size):
         buttons = [sg.Button(   button_text           = text_button,
-                                button_color         = ( COLORS_APP["AZUL_ESCURO_SINZENTO"], COLORS_APP["AZUL_CLARO"]) ,
+                                button_color         = (self.background_color, COLORS_APP["AZUL_CLARO"]) ,
                                 button_type          = button_type ,
                                 s                    = button_size, 
                                 key                  = key_button ,
@@ -133,7 +141,7 @@ class App():
                         values                  = list_values_table, 
                         headings                = list_heanding,
                         select_mode             = sg.TABLE_SELECT_MODE_BROWSE,
-                        change_submits          = False,
+                        #change_submits          = False,
                         justification           = 'center',
                         text_color              = COLORS_APP["SINZA_CLARO_1"],
                         background_color        = COLORS_APP["BRANCO_2"],
@@ -146,12 +154,12 @@ class App():
                         alternating_row_color   = COLORS_APP["LARANJA"],
                         expand_x                = True,
                         expand_y                = True,
-                        size                    = ( 4 , 8 ),
+                        size                    = ( 10 , 8 ),
                         key                     = key,
                         right_click_menu        = [ ["Visualizar"] , "Visualizar" ],
                         pad                     = 0 ,
                         row_height              = 40,
-                        col_widths              = [22, 22, 22, 22],
+                        col_widths              = [0 , 0, 0, 0],
                         hide_vertical_scroll    = True
                     )]
 
