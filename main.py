@@ -1,4 +1,5 @@
 import os
+from random import randint
 import sys
 import shutil
 from json import load
@@ -16,12 +17,9 @@ JSLOAD           = JsonClass()
 COLORS_APP       = JSLOAD.json_read(name_file = "database/app_colors" )
 THEME_APP_COLORS = JSLOAD.json_read(name_file = "database/theme_app" )
 
-HEADINGS         = [ "-- Noma das Tarefas --" ] 
-LIST_MATRIZ      = []
+
 #-----------------------------------------------------------------------------------------------
 
-for i in range(10):
-    LIST_MATRIZ.append( [("tarefa_" + str(i) ) , "2:86" ] )
 
 
 
@@ -32,8 +30,16 @@ class App():
         #-----------------------------------------------------------------------------------------------
         self.trava_comands  = True
         self.buttons_sizes  = (5 , 2)
-
         self.background_color = THEME_APP_COLORS["background"]
+        self.HEADINGS         = [ "-- Noma das Tarefas --" ] 
+        self.LIST_MATRIZ      = { 
+                                "TABLE_1" : [ ],
+                                "TABLE_2" : [ ],
+                                "TABLE_3" : [ ]
+                                }
+
+
+
         #----------- Layouts ----------------------------------------------------------------------------
         self.one_layouts = [                        
                            
@@ -42,25 +48,30 @@ class App():
                             self.layoutButtons( text_button = "PLUS" , 
                                                 key_button  = "_BUTTON_PLUS_ADD_T_",
                                                 button_type = 7 ,
-                                                button_size = (5 , 2) ) 
+                                                button_size = (5 , 2) ) ,
+                            #
 
+                            self.layoutButtons( text_button = "Configs" , 
+                                                key_button  = "_BUTTON_CONFIGS_",
+                                                button_type = 7 ,
+                                                button_size = (5 , 2) )
                             
                             ]
 
         #--------------------------------------------------------------------------------------------------------------------
-        self.table_1    = [ self.tabelas( list_heanding = HEADINGS  , list_values_table = LIST_MATRIZ , key = "_TABLE_1_") ]
+        self.table_1    = [ self.tabelas( list_heanding = self.HEADINGS  , list_values_table = self.LIST_MATRIZ["TABLE_1"] , key = "_TABLE_1_") ]
         self.button_1   = [ self.layoutButtons( text_button = "Passar_1" , 
                                                 key_button  = "_BUTTON_1_" , 
                                                 button_type = 7 , 
                                                 button_size = (5 , 2)) ]
 
-        self.table_2    = [  self.tabelas( list_heanding = HEADINGS  , list_values_table = LIST_MATRIZ , key = "_TABLE_2_") ]
+        self.table_2    = [  self.tabelas( list_heanding = self.HEADINGS  , list_values_table = self.LIST_MATRIZ["TABLE_2"] , key = "_TABLE_2_") ]
         self.button_2   = [ self.layoutButtons( text_button = "Passar_2" , 
                                                 key_button  = "_BUTTON_2_",
                                                 button_type = 7 ,
                                                 button_size = (5 , 2) ) ]
 
-        self.table_3    = [  self.tabelas( list_heanding = HEADINGS  , list_values_table = LIST_MATRIZ , key = "_TABLE_3_") ]
+        self.table_3    = [  self.tabelas( list_heanding = self.HEADINGS  , list_values_table = self.LIST_MATRIZ["TABLE_3"] , key = "_TABLE_3_") ]
 
 
 
@@ -110,7 +121,7 @@ class App():
                                     resizable               = True
 
                                     ).layout(self.full_layouts)
-
+    #--------------------------------------------------------------------------------------------------------------------
     def layoutText(self , text_str  , key_element = "_TEXT_"):
         texts = [sg.Text( text_str , 
                         text_color          = COLORS_APP["BRANCO_1"],
@@ -135,6 +146,7 @@ class App():
 
         pass
 
+    #--------------------------------------------------------------------------------------------------------------------
     def tabelas( self , list_heanding , list_values_table , key ):
 
         tablets =   [sg.Table(
@@ -178,6 +190,41 @@ class App():
         and fileN.lower().endswith((".dtsl"))] 
 
         return file_names
+    
+    #--------------------------------------------------------------------------------------------------------------------
+    def deletElement(self , events , table_key , matriz_table_name , name_event ):
+
+        if events == name_event :
+            try:
+                data_selected = [ self.LIST_MATRIZ[ matriz_table_name ][row] for row in self.values[ table_key ]]
+                #file_dir_path = DIR_CAPS + str( data_selected[0][0] ) + EXTENSION_IMG_BOOKS
+
+                for i in data_selected:
+                    self.LIST_MATRIZ[ matriz_table_name ].remove( i )
+                    
+
+            except:
+                pass
+            self.windons[ table_key ].update( values = self.LIST_MATRIZ[ matriz_table_name ]  )
+    
+    #--------------------------------------------------------------------------------------------------------------------    
+    def passList(self , events , event_name , matriz_table_name_1 , table_key_1 , matriz_table_name_2 ,  table_key_2   ):
+
+        if events == event_name :
+            try:
+
+                data_selected = [ self.LIST_MATRIZ[ matriz_table_name_1 ][row] for row in self.values[ table_key_1 ]]
+
+
+                self.LIST_MATRIZ[ matriz_table_name_2 ].append( data_selected[0])
+                
+                self.windons[ table_key_2 ].update( values =  self.LIST_MATRIZ[ matriz_table_name_2 ]  )
+
+                self.deletElement(  events = events  , table_key = table_key_1  , 
+                                    matriz_table_name = matriz_table_name_1 , name_event = event_name )
+            
+            except:
+                pass
 
     #--------------------------------------------------------------------------------------------------------------------
     def main(self):
@@ -187,10 +234,38 @@ class App():
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
 
-        pass
+            if self.events == "_BUTTON_PLUS_ADD_T_":
+                ran = randint( 0 , 1000)
+
+                self.LIST_MATRIZ["TABLE_1"].append( [" meu novo nome " + str( ran )] )
+                self.windons["_TABLE_1_" ].update( values =  self.LIST_MATRIZ["TABLE_1"]  )
+                print( self.LIST_MATRIZ["TABLE_1"] )
+
+            #if self.events == "_BUTTON_1_":
+                
+            self.passList(  events              = self.events   , event_name   = "_BUTTON_1_"  , 
+                            matriz_table_name_1 = "TABLE_1"     , table_key_1  =  "_TABLE_1_"  , 
+                            matriz_table_name_2 = "TABLE_2"     , table_key_2  =  "_TABLE_2_"    
+                        )
 
 
+            self.passList(  events              = self.events   , event_name   = "_BUTTON_2_"  , 
+                            matriz_table_name_1 = "TABLE_2"     , table_key_1  =  "_TABLE_2_"  , 
+                            matriz_table_name_2 = "TABLE_3"     , table_key_2  =  "_TABLE_3_"    
+                        )
 
+
+            self.deletElement(  events              = self.events   , table_key   = "_TABLE_1_" , 
+                                matriz_table_name   = "TABLE_1"     , name_event  = "Visualizar"
+                                )     
+
+            self.deletElement(  events              = self.events   , table_key   = "_TABLE_2_" , 
+                                matriz_table_name   = "TABLE_2"     , name_event  = "Visualizar"
+                                )      
+
+            self.deletElement(  events              = self.events   , table_key   = "_TABLE_3_" , 
+                                matriz_table_name   = "TABLE_3"     , name_event  = "Visualizar"
+                             )        
 
 
 
