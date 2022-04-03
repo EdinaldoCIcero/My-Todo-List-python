@@ -40,6 +40,7 @@ class WindInitApp():
 
         #print( self.data_selected )
 
+
         self.LIST_MATRIZ        = {
                                     "IMGS" : { 
                                                "IMG_COVER_1" : "",
@@ -118,7 +119,7 @@ class WindInitApp():
 
                         size                    = ( 5 , 8 ),
                         key                     = key,
-                        right_click_menu        = [ ["Abrir"] , "Abrir" ],
+                        right_click_menu        = [ "menu" , ["Abrir" , "Excluir"] ],
                         pad                     = 0 ,
                         row_height              = 40,
                         col_widths              = [0 , 0, 0, 0],
@@ -143,7 +144,7 @@ class WindInitApp():
 
         pass
    
-   #-------------------------------------------------------------------------------------------------------------------------
+    #-------------------------------------------------------------------------------------------------------------------------
     def saveValuesProject( self , events):
         
         if events == "_BUTTON_NEW_PROJECT_DATA_":
@@ -172,18 +173,61 @@ class WindInitApp():
             
 
         pass
- 
+    
+    #-------------------------------------------------------------------------------------------------------------------------
+    def saveProj(self , name_project ):
+
+        with open( "database/projects_datas/" + name_project + ".json" , "w" , encoding="utf8") as js_file:
+            json.dump( self.dict_name_project , js_file , sort_keys = False, indent = 4)
+            pass
+            
+            
+        PROJECTS = JSLOAD.json_read(name_file = "database/projectName" )
+        #self.dict_name_project["NAME_PR"].append( PROJECTS["NAME_PR"] )
+
+        self.windons["_TABLE_PROJECTS_"].update( values = PROJECTS["NAME_PR"]  )
+        
+    #-------------------------------------------------------------------------------------------------------------------------
     def selectElementTable(self , events, name_event ):
         
         if events == name_event :
-           
-            table_selected_name = [ self.dict_name_project["NAME_PR"][row] for row in self.values["_TABLE_PROJECTS_"] ][0][0]
-            self.list_name_append.append( table_selected_name )
+           try:
+               table_selected_name = [ self.dict_name_project["NAME_PR"][row] for row in self.values["_TABLE_PROJECTS_"] ][0][0]
+               self.list_name_append.append( table_selected_name )
+               print(x)
 
-            #print( table_selected_name )
-
+           except:
+            #print('An exception occurred')
+            pass
 
         return self.list_name_append[-1] 
+    
+    #-------------------------------------------------------------------------------------------------------------------------
+    def deletElement(self , events , table_key , matriz_table_name , name_event ):
+        
+
+        if events == name_event :
+            try:
+                data_selected = [ self.dict_name_project["NAME_PR"][row] for row in self.values[ table_key ]]
+                
+
+                for i in data_selected:
+                    self.dict_name_project["NAME_PR"].remove( i )
+                    
+                    project_n =  "database/projects_datas/" + i[0] + ".json"
+
+                    with open( "database/" + "projectName.json" , "w" , encoding="utf8") as js_file:
+                        json.dump( self.dict_name_project , js_file , sort_keys = False, indent = 4)
+                        pass
+
+                    os.remove( project_n )
+
+            except TypeError as e :
+                #print(" Erro em codigo ---> " , e )
+                pass
+
+            self.windons[ table_key ].update( values = self.dict_name_project["NAME_PR"]  )
+
 
     #-------------------------------------------------------------------------------------------------------------------------
     def update(self):
@@ -192,12 +236,13 @@ class WindInitApp():
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
             
+
             try:
+                self.deletElement( events  = self.events , table_key = "_TABLE_PROJECTS_" , matriz_table_name = ""  , name_event = "Excluir" )
 
                 get_table_name_selected = self.selectElementTable(events = self.events , name_event = "_TABLE_PROJECTS_"  )
                 
                 self.saveValuesProject( events = self.events )
-
 
                 if self.events == "_BUTTON_OPEN_PROJECT_":
                     app = AppMain( project_name = str( get_table_name_selected ))
@@ -205,7 +250,8 @@ class WindInitApp():
                     
                     pass
             
-            except:
+            except TypeError as e :
+                #print(" Erro em codigo ---> " , e )
                 pass
             
  

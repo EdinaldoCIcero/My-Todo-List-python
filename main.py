@@ -230,6 +230,7 @@ class AppMain():
                 pass
             self.windons[ table_key ].update( values = self.LIST_MATRIZ["TABLES_"][ matriz_table_name ]  )
     
+    #--------------------------------------------------------------------------------------------------------------------
     def atualizarTablesList(self , events ,name_event_key , table_key, table_key2 ):
 
         if events == name_event_key :
