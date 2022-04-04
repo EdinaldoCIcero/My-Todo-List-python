@@ -50,7 +50,8 @@ class WindInitApp():
                                     "TABLES_" :{
                                             "TABLE_1" : [ ],
                                             "TABLE_2" : [ ],
-                                            "TABLE_3" : [ ]
+                                            "TABLE_3" : [ ],
+                                            "TABLE_4" : [ ]
                                             }
                                 }
         

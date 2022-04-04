@@ -33,9 +33,12 @@ class AppMain():
 
         #-----------------------------------------------------------------------------------------------
         self.trava_comands      = True
-        self.buttons_sizes      = (5 , 2)
+        self.buttons_sizes      = (4 , 2)
         self.background_color   = THEME_APP_COLORS["background"]
-        self.HEADINGS           = [ "-- Noma das Tarefas --" ]
+        self.HEADINGS           = [ [ "      FAZER           "] , 
+                                    [ "      FAZENDO         "],
+                                    [ "      APROVAÇÃO       "],
+                                    [ "      APROVADOS       "] ]
         
         self.LIST_MATRIZ        = self.load_project_name_datas
 
@@ -43,7 +46,7 @@ class AppMain():
         AQUI 
         É 
         LINHA 
-        E QUEBRAS
+        E QUEBRAS 
         """
 
         #----------- Layouts ----------------------------------------------------------------------------
@@ -54,37 +57,57 @@ class AppMain():
                             [self.layoutButtons( text_button = "PLUS" , 
                                                 key_button  = "_BUTTON_PLUS_ADD_T_",
                                                 button_type = 7 ,
-                                                button_size = (5 , 2) )] ,
-                            #
-
+                                                button_size = self.buttons_sizes )] ,
+                            
                             [self.layoutButtons( text_button = "sAVE" , 
                                                 key_button  = "_BUTTON_SAVE_",
                                                 button_type = 7 ,
-                                                button_size = (5 , 2) )],
+                                                button_size = self.buttons_sizes )],
 
                             [self.layoutButtons( text_button = "Configs" , 
                                                 key_button  = "_BUTTON_CONFIGS_",
                                                 button_type = 7 ,
-                                                button_size = (5 , 2) )]
+                                                button_size = self.buttons_sizes )]
                             
                             ]
 
         #--------------------------------------------------------------------------------------------------------------------
-        self.table_1    = [ self.tabelas(   list_heanding = self.HEADINGS  , 
+        self.table_1    = [ [sg.Image("imgs/tesseract.png"  , size=(147 , 131 ), key="IMG_1") ],
+
+                            self.tabelas(   list_heanding = self.HEADINGS[0]  , 
                                             list_values_table = self.LIST_MATRIZ["TABLES_"]["TABLE_1"] , 
-                                            event_mouse_right = "Visualizar_1" ,
-                                            key = "_TABLE_1_") ]
+                                            event_mouse_right = [ "tabela_1" , ["Avançar_1" ,"Voltar_1" , "Excluir_1" ] ] ,
+                                            key = "_TABLE_1_") 
+                            ]
 
-        self.button_1   = [ [self.layoutButtons( text_button = "Passar_1" , 
-                                                key_button  = "_BUTTON_1_" , 
-                                                button_type = 7 , 
-                                                button_size = (5 , 2))] ]
-
-        self.table_2    = [ self.tabelas(   list_heanding = self.HEADINGS  , 
+        self.table_2    = [  [sg.Image("imgs/tesseract.png"  , size=(147 , 131 ), key="IMG_1") ],
+                             self.tabelas(   list_heanding = self.HEADINGS[1] , 
                                             list_values_table = self.LIST_MATRIZ["TABLES_"]["TABLE_2"] ,
-                                            event_mouse_right = "Visualizar_2" ,
+                                            event_mouse_right = [ "tabela_2" , ["Avançar_2" ,"Voltar_2" , "Excluir_2" ] ] ,
                                             key = "_TABLE_2_") ]
 
+
+        self.table_3    = [ [sg.Image("imgs/tesseract.png"  , size=(147 , 131 ), key="IMG_1") ],
+
+                            self.tabelas(  list_heanding = self.HEADINGS[2]  , 
+                                            list_values_table = self.LIST_MATRIZ["TABLES_"]["TABLE_3"] ,
+                                            event_mouse_right = [ "tabela_3" , ["Avançar_3" ,"Voltar_3" , "Excluir_3" ] ] ,
+                                            key = "_TABLE_3_") ]
+
+
+        self.table_4    = [ [sg.Image("imgs/tesseract.png"  , size=(147 , 131 ), key="IMG_1") ],
+        
+                            self.tabelas(  list_heanding = self.HEADINGS[3]  , 
+                                            list_values_table = self.LIST_MATRIZ["TABLES_"]["TABLE_4"] ,
+                                            event_mouse_right = [ "tabela_4" , ["Avançar_4" ,"Voltar_4" , "Excluir_4" ] ],
+                                            key = "_TABLE_4_") ]
+
+
+        #----------- BUTTONS LAYOUTS --------------------------------------------------------------------------------------
+        self.button_1   = [ [self.layoutButtons( text_button = "Passar_1"  ,
+                                                key_button  = "_BUTTON_1_" ,
+                                                button_type = 7 , 
+                                                button_size = (5 , 2))] ]
 
         self.button_2   = [ [self.layoutButtons( text_button = "Passar_2" , 
                                                 key_button  = "_BUTTON_2_",
@@ -92,30 +115,25 @@ class AppMain():
                                                 button_size = (5 , 2) )] ]
 
 
-        self.table_3    = [  self.tabelas(  list_heanding = self.HEADINGS  , 
-                                            list_values_table = self.LIST_MATRIZ["TABLES_"]["TABLE_3"] ,
-                                            event_mouse_right = "Visualizar_3" ,
-                                            key = "_TABLE_3_") ]
-
-
 
         self.full_tables = [
-                            [sg.Canvas(size = ( 147 , 131 )) , sg.Canvas(size = ( 714 , 131 ))],
-
-                            self.layoutText( text_str = text_test ),
+                            #[sg.Canvas(size = ( 147 , 131 )) , sg.Canvas(size = ( 714 , 131 ))],
+                            #self.layoutText( text_str = text_test ),
                             
                             [sg.HSeparator() ],
 
                             [
                                 sg.Column( self.table_1     , background_color = self.background_color) ,
-                                sg.Column( self.button_1    , background_color = self.background_color ) ,
+                                #sg.Column( self.button_1    , background_color = self.background_color ) ,
                                 
                                 #sg.VSeparator() ,
                                 sg.Column( self.table_2     , background_color = self.background_color  ),
-                                sg.Column( self.button_2    , background_color = self.background_color ) ,
+                                #sg.Column( self.button_2    , background_color = self.background_color ) ,
                                 
                                 #sg.VSeparator() ,
                                 sg.Column( self.table_3     , background_color = self.background_color ) ,
+
+                                sg.Column( self.table_4     , background_color = self.background_color ) ,
                             ]
                             
                            ]
@@ -135,7 +153,7 @@ class AppMain():
         #--------------------------------------------------------------------------------------------------------------------
         self.windons  = sg.Window( "My-Tod-List",
                                     background_color        = self.background_color,
-                                    size                    = (1024 , 600) ,
+                                    size                    = (1123 , 600),
                                     #icon                = "Icon.ico",
                                     #titlebar_icon       = base64.icone , 
                                     #use_custom_titlebar = False ,
@@ -144,6 +162,7 @@ class AppMain():
                                     resizable               = True
 
                                     ).layout(self.full_layouts)
+
     #--------------------------------------------------------------------------------------------------------------------
     def layoutText(self , text_str  , key_element = "_TEXT_"):
         texts = [sg.Text( text_str , 
@@ -191,7 +210,7 @@ class AppMain():
                         expand_y                = True,
                         size                    = ( 10 , 8 ),
                         key                     = key,
-                        right_click_menu        = [ [ event_mouse_right ] , event_mouse_right ],
+                        right_click_menu        = event_mouse_right ,
                         pad                     = 0 ,
                         row_height              = 40,
                         col_widths              = [0 , 0, 0, 0],
@@ -238,7 +257,7 @@ class AppMain():
             self.windons[ table_key ].set_focus(force = False)
             self.windons[ table_key2 ].set_focus(force = False)
 
-            print( table_key , table_key2  )
+            #print( table_key , table_key2  )
 
 
     #--------------------------------------------------------------------------------------------------------------------    
@@ -256,8 +275,7 @@ class AppMain():
                 pass
 
 
-    def saveValuesProject( self , events, tables_keys   ):
-        #self.LIST_MATRIZ
+    def saveValuesProject( self , events ):
 
         dict_project        = {
                                     "IMGS" : { 
@@ -268,16 +286,11 @@ class AppMain():
                                     "TABLES_" :{
                                             "TABLE_1" : self.LIST_MATRIZ["TABLES_"]["TABLE_1"],
                                             "TABLE_2" : self.LIST_MATRIZ["TABLES_"]["TABLE_2"],
-                                            "TABLE_3" : self.LIST_MATRIZ["TABLES_"]["TABLE_3"]
+                                            "TABLE_3" : self.LIST_MATRIZ["TABLES_"]["TABLE_3"],
+                                            "TABLE_4" : self.LIST_MATRIZ["TABLES_"]["TABLE_4"]
                                             }
                                 }
-
-        """dict_project = { "LIST_1" : self.LIST_MATRIZ["TABLES_"]["TABLE_1"] , 
-                         "LIST_2" : self.LIST_MATRIZ["TABLES_"]["TABLE_2"],
-                         "LIST_3" : self.LIST_MATRIZ["TABLES_"]["TABLE_3"]
-                         }
-        """
-
+        
         if events == "_BUTTON_SAVE_":
             with open( self.project_n + '.json', "w" , encoding="utf8") as js_file:
                 json.dump( dict_project , js_file , sort_keys = False, indent = 4)
@@ -290,10 +303,11 @@ class AppMain():
     def main(self):
         
         while True:
-            self.events , self.values = self.windons.Read()#timeout=10
+            self.events , self.values = self.windons.Read( timeout=10 )#timeout=10
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
-
+            
+            #------------ CONDIÇÃO PARA ADICIONAR UMA NOVA TAREFA NA PRIMEIRA LISTA -------------------
             if self.events == "_BUTTON_PLUS_ADD_T_":
                 app     = WintTitle()
                 name    = app.update()
@@ -302,38 +316,47 @@ class AppMain():
                 self.windons["_TABLE_1_" ].update( values =  self.LIST_MATRIZ["TABLES_"]["TABLE_1"]  )
                 #print( self.LIST_MATRIZ["TABLE_1"] )
 
-            #================================================================================================
-            self.atualizarTablesList(events= self.events , name_event_key = "_TABLE_1_" , table_key = "_TABLE_2_" , table_key2 = "_TABLE_3_" )
-            self.atualizarTablesList(events= self.events , name_event_key = "_TABLE_2_" , table_key = "_TABLE_1_" , table_key2 = "_TABLE_3_" )
-            self.atualizarTablesList(events= self.events , name_event_key = "_TABLE_3_" , table_key = "_TABLE_1_" , table_key2 = "_TABLE_2_" )
-
-            self.saveValuesProject( events = self.events  , tables_keys = [ self.values["_TABLE_1_"] , 
-                                                                            self.values["_TABLE_2_"],
-                                                                            self.values["_TABLE_3_"] 
-                                                                            ]  )
+            #----- FUNÇÃO RESPONSAVEL POR SALVAR AS ALTERAÇÕES ---------------------------------------
+            self.saveValuesProject( events = self.events )
 
 
-            self.passList(  events              = self.events   , event_name   = "_BUTTON_1_"  , 
-                            matriz_table_name_1 = "TABLE_1"     , table_key_1  =  "_TABLE_1_"  , 
+            #--------- PASSANDO AS TAREFAS DE TABELA EM TABELA  --------------------------------------
+            self.passList(  events              = self.events   , event_name   = "Avançar_1"  , 
+                            matriz_table_name_1 = "TABLE_1"     , table_key_1  =  "_TABLE_1_" , 
                             matriz_table_name_2 = "TABLE_2"     , table_key_2  =  "_TABLE_2_"    
                         )
             
-            self.passList(  events              = self.events   , event_name   = "_BUTTON_2_"  , 
-                            matriz_table_name_1 = "TABLE_2"     , table_key_1  =  "_TABLE_2_"  , 
+            self.passList(  events              = self.events   , event_name   = "Avançar_2"  , 
+                            matriz_table_name_1 = "TABLE_2"     , table_key_1  =  "_TABLE_2_" , 
                             matriz_table_name_2 = "TABLE_3"     , table_key_2  =  "_TABLE_3_"    
                         )
 
+            self.passList(  events              = self.events   , event_name   = "Avançar_3"  , 
+                            matriz_table_name_1 = "TABLE_3"     , table_key_1  =  "_TABLE_3_" , 
+                            matriz_table_name_2 = "TABLE_4"     , table_key_2  =  "_TABLE_4_"    
+                        )
+
+            #-------------------------------------------------------------------------------------------
+
+
+
+
+            #--------- DELETANDO TARAFAS DAS LISTA ----------------------------------------------
             self.deletElement(  events              = self.events   , table_key   = "_TABLE_1_" , 
-                                matriz_table_name   = "TABLE_1"     , name_event  = "Visualizar_1"
-                                )     
+                                matriz_table_name   = "TABLE_1"     , name_event  = "Excluir_1"
+                                ) 
 
             self.deletElement(  events              = self.events   , table_key   = "_TABLE_2_" , 
-                                matriz_table_name   = "TABLE_2"     , name_event  = "Visualizar_2"
+                                matriz_table_name   = "TABLE_2"     , name_event  = "Excluir_2"
                                 )      
 
             self.deletElement(  events              = self.events   , table_key   = "_TABLE_3_" , 
-                                matriz_table_name   = "TABLE_3"     , name_event  = "Visualizar_3"
-                             )        
+                                matriz_table_name   = "TABLE_3"     , name_event  = "Excluir_3"
+                             ) 
+
+            self.deletElement(  events              = self.events   , table_key   = "_TABLE_4_" , 
+                                matriz_table_name   = "TABLE_4"     , name_event  = "Excluir_4"
+                             )      
 
 
 
