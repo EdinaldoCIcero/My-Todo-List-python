@@ -26,7 +26,7 @@ class WintTitle():
         self.trava_comands      = True
         self.buttons_sizes      = (5 , 2)
         self.background_color   = THEME_APP_COLORS["background"]
-       
+        self.title = ""
 
 
         #----------- Layouts ----------------------------------------------------------------------------
@@ -46,7 +46,7 @@ class WintTitle():
         #--------------------------------------------------------------------------------------------------------------------
         self.windons  = sg.Window( "TITLE",
                                     background_color        = self.background_color,
-                                    size                    = (400 , 140) ,
+                                    size                    = (640 , 480) ,
                                     #icon                = "Icon.ico",
                                     #titlebar_icon       = base64.icone , 
                                     #use_custom_titlebar = False ,
@@ -80,12 +80,13 @@ class WintTitle():
                 break
 
             if self.events == "_BUTTON_PLUS_ADD_Titulo_":
-                title = self.values["INPUT_TITULO"]
+                self.title = self.values["INPUT_TITULO"]
+
                 self.windons.close()
 
                 
 
-        return title
+        return self.title
 
 
 #app = WintTitle()

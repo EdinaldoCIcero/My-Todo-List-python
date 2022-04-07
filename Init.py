@@ -99,7 +99,7 @@ class WindInitApp():
 
     #-------------------------------------------------------------------------------------------------------------------------
     def tabelas( self , list_heanding , list_values_table , key ):
-
+        
         tablets = [sg.Table(
                         values                  = list_values_table, 
                         headings                = list_heanding,
@@ -153,28 +153,29 @@ class WindInitApp():
             app     = WintTitle()
             name    = app.update()
             #-----------------------
-
-            self.dict_name_project["NAME_PR"].append( [name] )
             
-            
-            with open( "database/" + "projectName.json" , "w" , encoding="utf8") as js_file:
-                json.dump( self.dict_name_project , js_file , sort_keys = False, indent = 4)
-                pass
+            if name != "":
+                self.dict_name_project["NAME_PR"].append( [name] )
+                
+                
+                with open( "database/" + "projectName.json" , "w" , encoding="utf8") as js_file:
+                    json.dump( self.dict_name_project , js_file , sort_keys = False, indent = 4)
+                    pass
 
-            with open( "database/projects_datas/" + name + ".json" , "w" , encoding="utf8") as js_file:
-                json.dump( self.LIST_MATRIZ , js_file , sort_keys = False, indent = 4)
-                pass
-            
-            
-            PROJECTS = JSLOAD.json_read(name_file = "database/projectName" )
-            #self.dict_name_project["NAME_PR"].append( PROJECTS["NAME_PR"] )
+                with open( "database/projects_datas/" + name + ".json" , "w" , encoding="utf8") as js_file:
+                    json.dump( self.LIST_MATRIZ , js_file , sort_keys = False, indent = 4)
+                    pass
+                
+                
+                PROJECTS = JSLOAD.json_read(name_file = "database/projectName" )
+                #self.dict_name_project["NAME_PR"].append( PROJECTS["NAME_PR"] )
 
-            self.windons["_TABLE_PROJECTS_"].update( values = PROJECTS["NAME_PR"]  )
+                self.windons["_TABLE_PROJECTS_"].update( values = PROJECTS["NAME_PR"]  )
 
-            
-
+                
         pass
     
+
     #-------------------------------------------------------------------------------------------------------------------------
     def saveProj(self , name_project ):
 
@@ -195,7 +196,7 @@ class WindInitApp():
            try:
                table_selected_name = [ self.dict_name_project["NAME_PR"][row] for row in self.values["_TABLE_PROJECTS_"] ][0][0]
                self.list_name_append.append( table_selected_name )
-               print(x)
+               #print(x)
 
            except:
             #print('An exception occurred')
@@ -237,20 +238,22 @@ class WindInitApp():
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
             
-
             try:
                 self.deletElement( events  = self.events , table_key = "_TABLE_PROJECTS_" , matriz_table_name = ""  , name_event = "Excluir" )
-
                 get_table_name_selected = self.selectElementTable(events = self.events , name_event = "_TABLE_PROJECTS_"  )
-                
                 self.saveValuesProject( events = self.events )
 
-                if self.events == "_BUTTON_OPEN_PROJECT_":
+                if self.events == "_BUTTON_OPEN_PROJECT_" or  self.events == "Abrir" and str( get_table_name_selected ) != "":
                     app = AppMain( project_name = str( get_table_name_selected ))
                     app.main()
-                    
+
                     pass
             
+
+                else:
+                    #print("Nenhum projeto selecionado")  # Adicionar telinha PopUp #  
+                    pass
+
             except TypeError as e :
                 #print(" Erro em codigo ---> " , e )
                 pass

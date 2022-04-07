@@ -72,31 +72,28 @@ class AppMain():
                             ]
 
         #--------------------------------------------------------------------------------------------------------------------
-        self.table_1    = [ [sg.Image("imgs/tesseract.png"  , size=(147 , 131 ), key="IMG_1") ],
-
+        self.table_1    = [
                             self.tabelas(   list_heanding = self.HEADINGS[0]  , 
                                             list_values_table = self.LIST_MATRIZ["TABLES_"]["TABLE_1"] , 
                                             event_mouse_right = [ "tabela_1" , ["Avançar_1" ,"Voltar_1" , "Excluir_1" ] ] ,
                                             key = "_TABLE_1_") 
                             ]
 
-        self.table_2    = [  [sg.Image("imgs/tesseract.png"  , size=(147 , 131 ), key="IMG_1") ],
+        self.table_2    = [  
                              self.tabelas(   list_heanding = self.HEADINGS[1] , 
                                             list_values_table = self.LIST_MATRIZ["TABLES_"]["TABLE_2"] ,
                                             event_mouse_right = [ "tabela_2" , ["Avançar_2" ,"Voltar_2" , "Excluir_2" ] ] ,
                                             key = "_TABLE_2_") ]
 
 
-        self.table_3    = [ [sg.Image("imgs/tesseract.png"  , size=(147 , 131 ), key="IMG_1") ],
-
+        self.table_3    = [ 
                             self.tabelas(  list_heanding = self.HEADINGS[2]  , 
                                             list_values_table = self.LIST_MATRIZ["TABLES_"]["TABLE_3"] ,
                                             event_mouse_right = [ "tabela_3" , ["Avançar_3" ,"Voltar_3" , "Excluir_3" ] ] ,
                                             key = "_TABLE_3_") ]
 
 
-        self.table_4    = [ [sg.Image("imgs/tesseract.png"  , size=(147 , 131 ), key="IMG_1") ],
-        
+        self.table_4    = [ 
                             self.tabelas(  list_heanding = self.HEADINGS[3]  , 
                                             list_values_table = self.LIST_MATRIZ["TABLES_"]["TABLE_4"] ,
                                             event_mouse_right = [ "tabela_4" , ["Avançar_4" ,"Voltar_4" , "Excluir_4" ] ],
@@ -118,8 +115,10 @@ class AppMain():
 
         self.full_tables = [
                             #[sg.Canvas(size = ( 147 , 131 )) , sg.Canvas(size = ( 714 , 131 ))],
+                             
+
                             #self.layoutText( text_str = text_test ),
-                            
+                            [sg.Image("imgs/tesseract.png"  , size=(147 , 131 ), key="IMG_1") , self.layoutText( text_str = text_test ) ],
                             [sg.HSeparator() ],
 
                             [
@@ -165,11 +164,11 @@ class AppMain():
 
     #--------------------------------------------------------------------------------------------------------------------
     def layoutText(self , text_str  , key_element = "_TEXT_"):
-        texts = [sg.Text( text_str , 
+        texts = sg.Text( text_str , 
                         text_color          = COLORS_APP["BRANCO_1"],
                         background_color    = self.background_color,
                         key                 = key_element 
-                        )]
+                        )
         return texts        
 
     #--------------------------------------------------------------------------------------------------------------------
@@ -303,7 +302,7 @@ class AppMain():
     def main(self):
         
         while True:
-            self.events , self.values = self.windons.Read( timeout=10 )#timeout=10
+            self.events , self.values = self.windons.Read()#timeout=10
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
             
@@ -314,13 +313,30 @@ class AppMain():
 
                 self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name ] )
                 self.windons["_TABLE_1_" ].update( values =  self.LIST_MATRIZ["TABLES_"]["TABLE_1"]  )
-                #print( self.LIST_MATRIZ["TABLE_1"] )
+                
 
             #----- FUNÇÃO RESPONSAVEL POR SALVAR AS ALTERAÇÕES ---------------------------------------
             self.saveValuesProject( events = self.events )
 
 
             #--------- PASSANDO AS TAREFAS DE TABELA EM TABELA  --------------------------------------
+            self.passList(  events              = self.events   , event_name   = "Voltar_2"  , 
+                            matriz_table_name_1 = "TABLE_2"     , table_key_1  =  "_TABLE_2_" , 
+                            matriz_table_name_2 = "TABLE_1"     , table_key_2  =  "_TABLE_1_"    
+                        )
+            
+            self.passList(  events              = self.events   , event_name   = "Voltar_3"  , 
+                            matriz_table_name_1 = "TABLE_3"     , table_key_1  =  "_TABLE_3_" , 
+                            matriz_table_name_2 = "TABLE_2"     , table_key_2  =  "_TABLE_2_"    
+                        )
+
+            self.passList(  events              = self.events   , event_name   = "Voltar_4"  , 
+                            matriz_table_name_1 = "TABLE_4"     , table_key_1  =  "_TABLE_4_" , 
+                            matriz_table_name_2 = "TABLE_3"     , table_key_2  =  "_TABLE_3_"    
+                        )
+
+            #-------------VOLTANDO ELEMENTOS ENTRE LISTAS -----------------------------------------------
+
             self.passList(  events              = self.events   , event_name   = "Avançar_1"  , 
                             matriz_table_name_1 = "TABLE_1"     , table_key_1  =  "_TABLE_1_" , 
                             matriz_table_name_2 = "TABLE_2"     , table_key_2  =  "_TABLE_2_"    
@@ -333,11 +349,8 @@ class AppMain():
 
             self.passList(  events              = self.events   , event_name   = "Avançar_3"  , 
                             matriz_table_name_1 = "TABLE_3"     , table_key_1  =  "_TABLE_3_" , 
-                            matriz_table_name_2 = "TABLE_4"     , table_key_2  =  "_TABLE_4_"    
-                        )
-
-            #-------------------------------------------------------------------------------------------
-
+                            matriz_table_name_2 = "TABLE_4"     , table_key_2  =  "_TABLE_4_"  
+                            ) 
 
 
 
