@@ -10,6 +10,9 @@ from pprint import pprint, pformat
 from ast import literal_eval
 from libs.winTitle import WintTitle
 
+from datetime import date, datetime
+
+
 
 #-----------------------------------------------------------------------------------------------
 JSLOAD           = JsonClass()
@@ -20,6 +23,7 @@ THEME_APP_COLORS = JSLOAD.json_read(name_file = "database/themeApp"  )
 
 
 #-----------------------------------------------------------------------------------------------
+
 
 
 
@@ -35,6 +39,7 @@ class AppMain():
         self.trava_comands      = True
         self.buttons_sizes      = (4 , 2)
         self.background_color   = THEME_APP_COLORS["background"]
+
         self.HEADINGS           = [ [ "      FAZER           "] , 
                                     [ "      FAZENDO         "],
                                     [ "      APROVAÇÃO       "],
@@ -207,7 +212,7 @@ class AppMain():
                         alternating_row_color   = COLORS_APP["LARANJA"],
                         expand_x                = True,
                         expand_y                = True,
-                        size                    = ( 10 , 8 ),
+                        size                    = ( 10 , 10 ),
                         key                     = key,
                         right_click_menu        = event_mouse_right ,
                         pad                     = 0 ,
@@ -308,10 +313,11 @@ class AppMain():
             
             #------------ CONDIÇÃO PARA ADICIONAR UMA NOVA TAREFA NA PRIMEIRA LISTA -------------------
             if self.events == "_BUTTON_PLUS_ADD_T_":
-                app     = WintTitle()
-                name    = app.update()
+                data_hor    = datetime.now()
+                app         = WintTitle()
+                name        = app.update()
 
-                self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name ] )
+                self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name , str( data_hor ) ] )
                 self.windons["_TABLE_1_" ].update( values =  self.LIST_MATRIZ["TABLES_"]["TABLE_1"]  )
                 
 

@@ -12,6 +12,9 @@ from ast import Pass, literal_eval
 from libs.winTitle import WintTitle
 from main import AppMain
 
+from datetime import date, datetime
+
+
 
 
 #-----------------------------------------------------------------------------------------------
@@ -29,12 +32,14 @@ class WindInitApp():
         sg.theme("Reddit")
 
         #-----------------------------------------------------------------------------------------------
+        #self.data_hor = datetime.now()
+
         self.trava_comands      = True
         self.buttons_sizes      = (10 , 2)
         self.background_color   = THEME_APP_COLORS["background"]
         self.list_name_append        = [""]
 
-        self.HEADINGS           = [ " "*60 ]
+        self.HEADINGS           = [ " "*10 , "DATA" ]
         
         self.dict_name_project  = {  "NAME_PR" : PROJECT_NAME["NAME_PR"]  }
 
@@ -58,31 +63,26 @@ class WindInitApp():
 
         #----------- Layouts ----------------------------------------------------------------------------
         self.one_layouts = [                        
-                           
                             #self.layoutText( text_str = "Titulo Project Name" , key_element = "_TEXT_")
                             #[sg.Input(key = "INPUT_TITULO") ],
 
-                            [
-                                self.layoutButtons( text_button = "Abrir projeto" , 
+                            [self.layoutButtons( text_button = "Abrir projeto" , 
                                                 key_button  = "_BUTTON_OPEN_PROJECT_",
                                                 button_type = 7 ,
                                                 button_size = self.buttons_sizes ),
 
-                                self.layoutButtons( text_button = "Novo projeto" , 
+                            self.layoutButtons( text_button = "Novo projeto" , 
                                                 key_button  = "_BUTTON_NEW_PROJECT_DATA_",
                                                 button_type = 7 ,
                                                 button_size = self.buttons_sizes )
                             ],
 
-                            
-
                             [ self.tabelas( list_heanding = self.HEADINGS  , 
                                             list_values_table =  PROJECT_NAME["NAME_PR"]  , 
                                             key = "_TABLE_PROJECTS_") ]
-                            
+
                             ]
 
-        
 
         #--------------------------------------------------------------------------------------------------------------------
         self.windons  = sg.Window( "PROJECT_GAMES_DEVELOPMENT_PROGRESSEC...",
@@ -95,7 +95,7 @@ class WindInitApp():
                                     use_default_focus       = False ,
                                     resizable               = False
 
-                                    ).layout(self.one_layouts) 
+                                    ).layout(self.one_layouts)
 
     #-------------------------------------------------------------------------------------------------------------------------
     def tabelas( self , list_heanding , list_values_table , key ):
@@ -115,8 +115,8 @@ class WindInitApp():
                         enable_click_events     = True,
                         bind_return_key         = True,
                         alternating_row_color   = COLORS_APP["LARANJA"],
-                        expand_x                = False,
-                        expand_y                = False,
+                        expand_x                = True,
+                        expand_y                = True,
 
                         size                    = ( 5 , 8 ),
                         key                     = key,
@@ -149,13 +149,15 @@ class WindInitApp():
     def saveValuesProject( self , events):
         
         if events == "_BUTTON_NEW_PROJECT_DATA_":
+            data_hor = datetime.now()
             #-----------------------
             app     = WintTitle()
             name    = app.update()
             #-----------------------
             
             if name != "":
-                self.dict_name_project["NAME_PR"].append( [name] )
+                self.dict_name_project["NAME_PR"].append( [name , str( data_hor ) ] )
+                #self.dict_name_project["NAME_PR"].append( [name] )
                 
                 
                 with open( "database/" + "projectName.json" , "w" , encoding="utf8") as js_file:
@@ -175,7 +177,6 @@ class WindInitApp():
                 
         pass
     
-
     #-------------------------------------------------------------------------------------------------------------------------
     def saveProj(self , name_project ):
 
@@ -230,7 +231,6 @@ class WindInitApp():
 
             self.windons[ table_key ].update( values = self.dict_name_project["NAME_PR"]  )
 
-
     #-------------------------------------------------------------------------------------------------------------------------
     def update(self):
         while True:
@@ -243,12 +243,16 @@ class WindInitApp():
                 get_table_name_selected = self.selectElementTable(events = self.events , name_event = "_TABLE_PROJECTS_"  )
                 self.saveValuesProject( events = self.events )
 
-                if self.events == "_BUTTON_OPEN_PROJECT_" or  self.events == "Abrir" and str( get_table_name_selected ) != "":
+                if self.events == "_BUTTON_OPEN_PROJECT_" and get_table_name_selected != "":
                     app = AppMain( project_name = str( get_table_name_selected ))
                     app.main()
-
                     pass
-            
+
+                elif self.events == "Abrir" :
+                    app = AppMain( project_name = str( get_table_name_selected ))
+                    app.main()
+                    pass
+
 
                 else:
                     #print("Nenhum projeto selecionado")  # Adicionar telinha PopUp #  
@@ -258,10 +262,6 @@ class WindInitApp():
                 #print(" Erro em codigo ---> " , e )
                 pass
             
- 
-
-
-
 
 
 #-------------------------------------------------------------------------------------------------------------------------
