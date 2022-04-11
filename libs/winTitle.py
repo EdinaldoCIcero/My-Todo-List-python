@@ -19,15 +19,18 @@ THEME_APP_COLORS = JSLOAD.json_read(name_file = "database/themeApp" )
 #-----------------------------------------------------------------------------------------------
 
 class WintTitle():
-    def __init__(self):
+    def __init__(self , type_windtitle):
         sg.theme("Reddit")
 
+        self.type_wind          = type_windtitle
         #-----------------------------------------------------------------------------------------------
         self.trava_comands      = True
         self.buttons_sizes      = (5 , 2)
         self.background_color   = THEME_APP_COLORS["background"]
-        self.title = ""
-
+        #--------------------
+        self.title              = ""
+        self.descriptions_task  = ""
+         
 
         #----------- Layouts ----------------------------------------------------------------------------
         self.one_layouts = [                        
@@ -43,7 +46,31 @@ class WintTitle():
                             
                             ]
 
-        #--------------------------------------------------------------------------------------------------------------------
+        self.two_layouts = [                        
+                           
+                            #self.layoutText( text_str = "Titulo Project Name" , key_element = "_TEXT_")
+                            [sg.Input(key = "INPUT_TITULO") ],
+                            [self.layoutButtons( text_button = "PLUS" , 
+                                                key_button  = "_BUTTON_PLUS_ADD_Titulo_",
+                                                button_type = 7 ,
+                                                button_size = (5 , 2) )] ,
+
+                            [sg.Input(key = "INPUT_TITULO_111") ],
+                            [sg.Input(key = "INPUT_TITULO_22" ) ],
+                            
+                            [sg.Multiline(  default_text     = "Digite Aqui",
+                                            autoscroll       = True , 
+                                            size             = (100, 20), 
+                                            background_color = self.background_color ,
+                                            text_color       = COLORS_APP["BRANCO_1"] , 
+                                            key              = "MULT_DESCRIPTION")],
+
+                            
+                            ]
+
+        #-------------------------------------------------------------------------------------------------------------------
+        layouts_dicts = { "LAYOUT_APP_INIT_PROJECTS_LIST" : self.one_layouts , "LAYOUT_APP_TABLES_TASKS" : self.two_layouts  }
+
         self.windons  = sg.Window( "TITLE",
                                     background_color        = self.background_color,
                                     size                    = (640 , 480) ,
@@ -54,7 +81,7 @@ class WintTitle():
                                     use_default_focus       = False ,
                                     resizable               = False
 
-                                    ).layout(self.one_layouts) 
+                                    ).layout( layouts_dicts[ self.type_wind ] )
 
 
     def layoutButtons(self , text_button , key_button , button_type , button_size):
@@ -81,6 +108,7 @@ class WintTitle():
 
             if self.events == "_BUTTON_PLUS_ADD_Titulo_":
                 self.title = self.values["INPUT_TITULO"]
+
 
                 self.windons.close()
 

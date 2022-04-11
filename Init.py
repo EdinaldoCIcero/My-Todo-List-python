@@ -83,8 +83,8 @@ class WindInitApp():
 
                             ]
 
-
         #--------------------------------------------------------------------------------------------------------------------
+
         self.windons  = sg.Window( "PROJECT_GAMES_DEVELOPMENT_PROGRESSEC...",
                                     background_color        = self.background_color,
                                     size                    = (640 , 480) ,
@@ -95,7 +95,7 @@ class WindInitApp():
                                     use_default_focus       = False ,
                                     resizable               = False
 
-                                    ).layout(self.one_layouts)
+                                    ).layout( self.one_layouts )
 
     #-------------------------------------------------------------------------------------------------------------------------
     def tabelas( self , list_heanding , list_values_table , key ):
@@ -151,7 +151,7 @@ class WindInitApp():
         if events == "_BUTTON_NEW_PROJECT_DATA_":
             data_hor = datetime.now()
             #-----------------------
-            app     = WintTitle()
+            app     = WintTitle( type_windtitle = "LAYOUT_APP_INIT_PROJECTS_LIST" )
             name    = app.update()
             #-----------------------
             
@@ -197,7 +197,6 @@ class WindInitApp():
            try:
                table_selected_name = [ self.dict_name_project["NAME_PR"][row] for row in self.values["_TABLE_PROJECTS_"] ][0][0]
                self.list_name_append.append( table_selected_name )
-               #print(x)
 
            except:
             #print('An exception occurred')
