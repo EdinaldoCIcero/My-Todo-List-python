@@ -30,7 +30,7 @@ class WintTitle():
         #--------------------
         self.title              = ""
         self.descriptions_task  = ""
-         
+        self.img_path           = ""
 
         #----------- Layouts ----------------------------------------------------------------------------
         self.one_layouts = [                        
@@ -41,6 +41,8 @@ class WintTitle():
                                                 key_button  = "_BUTTON_PLUS_ADD_Titulo_",
                                                 button_type = 7 ,
                                                 button_size = (5 , 2) )] ,
+
+                            
                             #
 
                             
@@ -55,12 +57,17 @@ class WintTitle():
                                                 button_type = 7 ,
                                                 button_size = (5 , 2) )] ,
 
+                            [self.layoutButtons( text_button = "buscar imagem" , 
+                                                key_button  = "_BUTTON_GET_IMAGE_PATH",
+                                                button_type = 2 ,
+                                                button_size = (5 , 2) )],
+
                             [sg.Input(key = "INPUT_TITULO_111") ],
                             [sg.Input(key = "INPUT_TITULO_22" ) ],
                             
                             [sg.Multiline(  default_text     = "Digite Aqui",
                                             autoscroll       = True , 
-                                            size             = (100, 20), 
+                                            size             = (100, 8), 
                                             background_color = self.background_color ,
                                             text_color       = COLORS_APP["BRANCO_1"] , 
                                             key              = "MULT_DESCRIPTION")],
@@ -105,16 +112,24 @@ class WintTitle():
             self.events , self.values = self.windons.Read()#timeout=10
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
+            
+            
+           # if self.events == "_BUTTON_GET_IMAGE_PATH":
+                #self.img_path = self.values["_BUTTON_GET_IMAGE_PATH"]
+
+                #pass
 
             if self.events == "_BUTTON_PLUS_ADD_Titulo_":
-                self.title = self.values["INPUT_TITULO"]
+                self.title      = self.values["INPUT_TITULO"] 
+                self.img_path   = self.values["_BUTTON_GET_IMAGE_PATH"]
 
+                #self.img_path 
 
                 self.windons.close()
 
                 
 
-        return self.title
+        return self.title , self.img_path
 
 
 #app = WintTitle()

@@ -36,6 +36,7 @@ class AppMain():
         self.load_project_name_datas  = JSLOAD.json_read(name_file = self.project_n )
 
         #-----------------------------------------------------------------------------------------------
+        self.LisrTable_values   = []
         self.trava_comands      = True
         self.buttons_sizes      = (4 , 2)
         self.background_color   = THEME_APP_COLORS["background"]
@@ -99,7 +100,7 @@ class AppMain():
 
 
         self.table_4    = [ 
-                            self.tabelas(  list_heanding        = self.HEADINGS[3]  , 
+                            self.tabelas(   list_heanding       = self.HEADINGS[3]  , 
                                             list_values_table   = self.LIST_MATRIZ["TABLES_"]["TABLE_4"] ,
                                             event_mouse_right   = [ "tabela_4" , ["Avançar_4" ,"Voltar_4" , "Excluir_4" ] ],
                                             key                 = "_TABLE_4_") ]
@@ -279,18 +280,22 @@ class AppMain():
         pass
     
     #--------------------------------------------------------------------------------------------------------------------    
-    def selectElementTable(self , events, name_event ):
+    def selectElementTable(self , wind ,  events, table_key , table_data_value_name  ):
         
-        if events == name_event :
-           try:
-               table_selected_name = [ self.dict_name_project["NAME_PR"][row] for row in self.values["_TABLE_PROJECTS_"] ][0][0]
-               self.list_name_append.append( table_selected_name )
+        if events == table_key :
+            try:
+                data_selected = [ self.load_project_name_datas["TABLES_"][ table_data_value_name ][row] for row in self.values[table_key] ][0]
+                #self.list_name_append.append( table_selected_name )
 
-           except:
-            #print('An exception occurred')
-            pass
 
-        return self.list_name_append[-1] 
+                print( data_selected[2] )
+                self.windons["IMG_1"].update( str( data_selected[2] ) )
+            
+            except TypeError as erro :
+                print('An exception occurred -- >' , erro )
+                pass
+
+        #return self.list_name_append 
 
 
     #--------------------------------------------------------------------------------------------------------------------
@@ -301,17 +306,26 @@ class AppMain():
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
             
+            
+
             #------------ CONDIÇÃO PARA ADICIONAR UMA NOVA TAREFA NA PRIMEIRA LISTA -------------------
             if self.events == "_BUTTON_PLUS_ADD_T_":
-                data_hor    = datetime.now()
-                app         = WintTitle( type_windtitle = "LAYOUT_APP_TABLES_TASKS" )
-                name        = app.update()
+                data_hor            = datetime.now()
+                app                 = WintTitle( type_windtitle = "LAYOUT_APP_TABLES_TASKS" )
+                name , imagem_path  = app.update()
 
-
-
-                self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name , str( data_hor ) ] )
+                self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name , str( data_hor )  , imagem_path ] )
                 self.windons["_TABLE_1_" ].update( values =  self.LIST_MATRIZ["TABLES_"]["TABLE_1"]  )
-                
+            
+
+
+            # ------ SELECT TASKS LISTS -------------------------------------------------------------- 
+            self.selectElementTable( wind  = self.windons , events = self.events, table_key = "_TABLE_1_" , table_data_value_name = "TABLE_1" )
+            self.selectElementTable( wind  = self.windons , events = self.events, table_key = "_TABLE_2_" , table_data_value_name = "TABLE_2" )
+            self.selectElementTable( wind  = self.windons , events = self.events, table_key = "_TABLE_3_" , table_data_value_name = "TABLE_3" )
+            self.selectElementTable( wind  = self.windons , events = self.events, table_key = "_TABLE_4_" , table_data_value_name = "TABLE_4" )
+
+            
 
             #----- FUNÇÃO RESPONSAVEL POR SALVAR AS ALTERAÇÕES ---------------------------------------
             self.saveValuesProject( events = self.events )
@@ -348,8 +362,7 @@ class AppMain():
             self.passList(  events              = self.events   , event_name   = "Avançar_3"  , 
                             matriz_table_name_1 = "TABLE_3"     , table_key_1  =  "_TABLE_3_" , 
                             matriz_table_name_2 = "TABLE_4"     , table_key_2  =  "_TABLE_4_"  
-                            ) 
-
+                            )
 
 
             #--------- DELETANDO TARAFAS DAS LISTA ----------------------------------------------
@@ -357,7 +370,7 @@ class AppMain():
                                 matriz_table_name   = "TABLE_1"     , name_event  = "Excluir_1"
                                 ) 
 
-            self.deletElement(  events              = self.events   , table_key   = "_TABLE_2_" , 
+            self.deletElement(  events              = self.events   , table_key   = "_TABLE_2_" ,
                                 matriz_table_name   = "TABLE_2"     , name_event  = "Excluir_2"
                                 )      
 
