@@ -10,6 +10,7 @@ from pprint import pprint, pformat
 from ast import literal_eval
 from libs.winTitle import WintTitle
 
+
 from datetime import date, datetime
 
 
@@ -22,6 +23,7 @@ COLORS_APP       = JSLOAD.json_read(name_file = "database/appColors" )
 THEME_APP_COLORS = JSLOAD.json_read(name_file = "database/themeApp"  )
 
 
+PATH_IMAGES_TASKS = "database/projects_datas/tasksImages/"
 #-----------------------------------------------------------------------------------------------
 
 
@@ -40,6 +42,8 @@ class AppMain():
         self.trava_comands      = True
         self.buttons_sizes      = (4 , 2)
         self.background_color   = THEME_APP_COLORS["background"]
+        self.name_selct         = ""
+
 
         self.HEADINGS           = [ [ "      FAZER           "] , 
                                     [ "      FAZENDO         "],
@@ -54,7 +58,7 @@ class AppMain():
         LINHA 
         E QUEBRAS 
         """
-
+        self.list_selecds_name = []
         #----------- Layouts ----------------------------------------------------------------------------
         self.one_layouts = [                        
                            
@@ -106,10 +110,6 @@ class AppMain():
                                             key                 = "_TABLE_4_") ]
 
 
-       
-
-
-
         self.full_tables = [
                             #[sg.Canvas(size = ( 147 , 131 )) , sg.Canvas(size = ( 714 , 131 ))],
                              
@@ -130,7 +130,6 @@ class AppMain():
                             
                            ]
         
-
         #--------------------------------------------------------------------------------------------------------------------
         self.full_layouts = [ 
 
@@ -224,36 +223,6 @@ class AppMain():
         and fileN.lower().endswith((".dtsl"))] 
 
         return file_names
-    
-    #--------------------------------------------------------------------------------------------------------------------
-    def deletElement(self , events , table_key , matriz_table_name , name_event ):
-
-        if events == name_event :
-            try:
-                data_selected = [ self.LIST_MATRIZ["TABLES_"][ matriz_table_name ][row] for row in self.values[ table_key ]]
-                #file_dir_path = DIR_CAPS + str( data_selected[0][0] ) + EXTENSION_IMG_BOOKS
-
-                for i in data_selected:
-                    self.LIST_MATRIZ["TABLES_"][ matriz_table_name ].remove( i )
-                    
-
-            except:
-                pass
-            self.windons[ table_key ].update( values = self.LIST_MATRIZ["TABLES_"][ matriz_table_name ]  )
-
-    #--------------------------------------------------------------------------------------------------------------------    
-    def passList(self , events , event_name , matriz_table_name_1 , table_key_1 , matriz_table_name_2 ,  table_key_2   ):
-        if events == event_name :
-            try:
-                data_selected = [ self.LIST_MATRIZ["TABLES_"][ matriz_table_name_1 ][row] for row in self.values[ table_key_1 ]]
-                self.LIST_MATRIZ["TABLES_"][ matriz_table_name_2 ].append( data_selected[0])
-
-                self.windons[ table_key_2 ].update( values =  self.LIST_MATRIZ["TABLES_"][ matriz_table_name_2 ]  )
-
-                self.deletElement(  events = events  , table_key = table_key_1  , 
-                                    matriz_table_name = matriz_table_name_1 , name_event = event_name )
-            except:
-                pass
 
     #--------------------------------------------------------------------------------------------------------------------    
     def saveValuesProject( self , events ):
@@ -280,22 +249,66 @@ class AppMain():
         pass
     
     #--------------------------------------------------------------------------------------------------------------------    
-    def selectElementTable(self , wind ,  events, table_key , table_data_value_name  ):
+    def selectElementTable(self , table_key , table_data_value_name ):
+        data_selected = [ self.load_project_name_datas["TABLES_"][ table_data_value_name ][row] for row in self.values[table_key] ]
+        
+        return data_selected
+
+    #--------------------------------------------------------------------------------------------------------------------    
+    def passList(self , events , event_name , matriz_table_name_1 , table_key_1 , matriz_table_name_2 ,  table_key_2   ):
+        
+        if events == event_name :
+            try:
+                data_selected_pass = self.selectElementTable( table_key = table_key_1 , table_data_value_name = matriz_table_name_1 )
+                print( data_selected_pass )
+
+                self.LIST_MATRIZ["TABLES_"][ matriz_table_name_2 ].append( data_selected_pass[0] )
+
+                for i in data_selected_pass:
+                    self.LIST_MATRIZ["TABLES_"][ matriz_table_name_1 ].remove( i )
+           
+
+            except TypeError as erro :
+                print('An exception occurred Fun( passList ) -- >' , erro )
+                pass
+
+
+            self.windons[ table_key_1 ].update( values = self.LIST_MATRIZ["TABLES_"][ matriz_table_name_1 ] )
+            self.windons[ table_key_2 ].update( values = self.LIST_MATRIZ["TABLES_"][ matriz_table_name_2 ]  )
+
+     #--------------------------------------------------------------------------------------------------------------------    
+    def selectElementTableIMAGEN(self , events, table_key , table_data_value_name ):
         
         if events == table_key :
             try:
-                data_selected = [ self.load_project_name_datas["TABLES_"][ table_data_value_name ][row] for row in self.values[table_key] ][0]
-                #self.list_name_append.append( table_selected_name )
+                data_selected = self.selectElementTable( table_key = table_key , table_data_value_name = table_data_value_name )
 
+                for i in data_selected:
+                    self.windons["IMG_1"].update( str( i[2] ) )
 
-                print( data_selected[2] )
-                self.windons["IMG_1"].update( str( data_selected[2] ) )
-            
-            except TypeError as erro :
-                print('An exception occurred -- >' , erro )
+            except TypeError as faledErro:
+                
+                print('An exception occurred func( selectElementTableIMAGEN ) ---> ' , faledErro)
                 pass
 
-        #return self.list_name_append 
+
+    #--------------------------------------------------------------------------------------------------------------------
+    def deletElement(self , events , table_key , matriz_table_name , name_event ):
+
+        if events == name_event :
+            try:
+                data_selected_delet = self.selectElementTable( table_key = table_key , table_data_value_name = matriz_table_name )
+
+                for i in data_selected_delet:
+                    self.LIST_MATRIZ["TABLES_"][ matriz_table_name ].remove( i )
+                    print( i )
+                    os.remove( str( i[2] ) )
+                    
+            except TypeError as erro :
+                print('An exception occurred func( deletElement ) -- >' , erro )
+                pass
+
+            self.windons[ table_key ].update( values = self.LIST_MATRIZ["TABLES_"][ matriz_table_name ] )
 
 
     #--------------------------------------------------------------------------------------------------------------------
@@ -306,32 +319,65 @@ class AppMain():
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
             
-            
-
             #------------ CONDIÇÃO PARA ADICIONAR UMA NOVA TAREFA NA PRIMEIRA LISTA -------------------
             if self.events == "_BUTTON_PLUS_ADD_T_":
                 data_hor            = datetime.now()
                 app                 = WintTitle( type_windtitle = "LAYOUT_APP_TABLES_TASKS" )
                 name , imagem_path  = app.update()
 
-                self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name , str( data_hor )  , imagem_path ] )
-                self.windons["_TABLE_1_" ].update( values =  self.LIST_MATRIZ["TABLES_"]["TABLE_1"]  )
-            
+
+                self.windons["IMG_1"].update( PATH_IMAGES_TASKS + "tesseract.png" )
+                self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name , str( data_hor ) , imagem_path ] )
+                self.windons["_TABLE_1_" ].update( values = self.LIST_MATRIZ["TABLES_"]["TABLE_1"]  )
 
 
             # ------ SELECT TASKS LISTS -------------------------------------------------------------- 
-            self.selectElementTable( wind  = self.windons , events = self.events, table_key = "_TABLE_1_" , table_data_value_name = "TABLE_1" )
-            self.selectElementTable( wind  = self.windons , events = self.events, table_key = "_TABLE_2_" , table_data_value_name = "TABLE_2" )
-            self.selectElementTable( wind  = self.windons , events = self.events, table_key = "_TABLE_3_" , table_data_value_name = "TABLE_3" )
-            self.selectElementTable( wind  = self.windons , events = self.events, table_key = "_TABLE_4_" , table_data_value_name = "TABLE_4" )
+            
+            self.selectElementTableIMAGEN( events = self.events, table_key = "_TABLE_1_" , table_data_value_name = "TABLE_1" )
+            self.selectElementTableIMAGEN( events = self.events, table_key = "_TABLE_2_" , table_data_value_name = "TABLE_2" )
+            self.selectElementTableIMAGEN( events = self.events, table_key = "_TABLE_3_" , table_data_value_name = "TABLE_3" )
+            self.selectElementTableIMAGEN( events = self.events, table_key = "_TABLE_4_" , table_data_value_name = "TABLE_4" )
 
             
+ 
+            #--------- DELETANDO TARAFAS DAS LISTA ----------------------------------------------
+            self.deletElement(  events              = self.events   , table_key   = "_TABLE_1_" , 
+                                matriz_table_name   = "TABLE_1"     , name_event  = "Excluir_1" )
 
+            
+            self.deletElement(  events              = self.events   , table_key   = "_TABLE_2_" ,
+                                matriz_table_name   = "TABLE_2"     , name_event  = "Excluir_2" )      
+
+            self.deletElement(  events              = self.events   , table_key   = "_TABLE_3_" , 
+                                matriz_table_name   = "TABLE_3"     , name_event  = "Excluir_3" ) 
+
+            self.deletElement(  events              = self.events   , table_key   = "_TABLE_4_" , 
+                                matriz_table_name   = "TABLE_4"     , name_event  = "Excluir_4" )      
+            
+
+            #--------- PASSANDO AS TAREFAS DE TABELA EM TABELA  --------------------------------------
+
+            self.passList(  events              = self.events   , event_name   = "Avançar_1"  , 
+                            matriz_table_name_1 = "TABLE_1"     , table_key_1  =  "_TABLE_1_" , 
+                            matriz_table_name_2 = "TABLE_2"     , table_key_2  =  "_TABLE_2_"  )
+
+            
+            self.passList(  events              = self.events   , event_name   = "Avançar_2"  , 
+                            matriz_table_name_1 = "TABLE_2"     , table_key_1  =  "_TABLE_2_" , 
+                            matriz_table_name_2 = "TABLE_3"     , table_key_2  =  "_TABLE_3_"    
+                        )
+
+            self.passList(  events              = self.events   , event_name   = "Avançar_3"  , 
+                            matriz_table_name_1 = "TABLE_3"     , table_key_1  =  "_TABLE_3_" , 
+                            matriz_table_name_2 = "TABLE_4"     , table_key_2  =  "_TABLE_4_"  
+                            )
+            
             #----- FUNÇÃO RESPONSAVEL POR SALVAR AS ALTERAÇÕES ---------------------------------------
             self.saveValuesProject( events = self.events )
 
 
-            #--------- PASSANDO AS TAREFAS DE TABELA EM TABELA  --------------------------------------
+            #-------------VOLTANDO ELEMENTOS ENTRE LISTAS -----------------------------------------------
+            
             self.passList(  events              = self.events   , event_name   = "Voltar_2"  , 
                             matriz_table_name_1 = "TABLE_2"     , table_key_1  =  "_TABLE_2_" , 
                             matriz_table_name_2 = "TABLE_1"     , table_key_2  =  "_TABLE_1_"    
@@ -346,42 +392,11 @@ class AppMain():
                             matriz_table_name_1 = "TABLE_4"     , table_key_1  =  "_TABLE_4_" , 
                             matriz_table_name_2 = "TABLE_3"     , table_key_2  =  "_TABLE_3_"    
                         )
-
-            #-------------VOLTANDO ELEMENTOS ENTRE LISTAS -----------------------------------------------
-
-            self.passList(  events              = self.events   , event_name   = "Avançar_1"  , 
-                            matriz_table_name_1 = "TABLE_1"     , table_key_1  =  "_TABLE_1_" , 
-                            matriz_table_name_2 = "TABLE_2"     , table_key_2  =  "_TABLE_2_"    
-                        )
             
-            self.passList(  events              = self.events   , event_name   = "Avançar_2"  , 
-                            matriz_table_name_1 = "TABLE_2"     , table_key_1  =  "_TABLE_2_" , 
-                            matriz_table_name_2 = "TABLE_3"     , table_key_2  =  "_TABLE_3_"    
-                        )
-
-            self.passList(  events              = self.events   , event_name   = "Avançar_3"  , 
-                            matriz_table_name_1 = "TABLE_3"     , table_key_1  =  "_TABLE_3_" , 
-                            matriz_table_name_2 = "TABLE_4"     , table_key_2  =  "_TABLE_4_"  
-                            )
+           
 
 
-            #--------- DELETANDO TARAFAS DAS LISTA ----------------------------------------------
-            self.deletElement(  events              = self.events   , table_key   = "_TABLE_1_" , 
-                                matriz_table_name   = "TABLE_1"     , name_event  = "Excluir_1"
-                                ) 
-
-            self.deletElement(  events              = self.events   , table_key   = "_TABLE_2_" ,
-                                matriz_table_name   = "TABLE_2"     , name_event  = "Excluir_2"
-                                )      
-
-            self.deletElement(  events              = self.events   , table_key   = "_TABLE_3_" , 
-                                matriz_table_name   = "TABLE_3"     , name_event  = "Excluir_3"
-                             ) 
-
-            self.deletElement(  events              = self.events   , table_key   = "_TABLE_4_" , 
-                                matriz_table_name   = "TABLE_4"     , name_event  = "Excluir_4"
-                             )      
-
+            
 
 
 

@@ -8,7 +8,7 @@ import PySimpleGUI as sg
 from libs.JSON import JsonClass
 from pprint import pprint, pformat
 from ast import literal_eval
-
+from PIL import Image
 
 
 #-----------------------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ class WintTitle():
         self.one_layouts = [                        
                            
                             #self.layoutText( text_str = "Titulo Project Name" , key_element = "_TEXT_")
-                            [sg.Input(key = "INPUT_TITULO") ],
+                            [sg.Input(key = "INPUT_TITULO_1") ],
                             [self.layoutButtons( text_button = "PLUS" , 
                                                 key_button  = "_BUTTON_PLUS_ADD_Titulo_",
                                                 button_type = 7 ,
@@ -53,7 +53,7 @@ class WintTitle():
                             #self.layoutText( text_str = "Titulo Project Name" , key_element = "_TEXT_")
                             [sg.Input(key = "INPUT_TITULO") ],
                             [self.layoutButtons( text_button = "PLUS" , 
-                                                key_button  = "_BUTTON_PLUS_ADD_Titulo_",
+                                                key_button  = "_BUTTON_PLUS_ADD_Titulo_2",
                                                 button_type = 7 ,
                                                 button_size = (5 , 2) )] ,
 
@@ -104,7 +104,14 @@ class WintTitle():
 
         return buttons
 
+    def coverResize(self, image_file_name , imagen_resize ):
+        
+        with Image.open( image_file_name ) as im:
+            im_resized = im.resize(  imagen_resize  )
+
+            return im_resized 
         pass
+
 
     def update(self):
         
@@ -113,23 +120,30 @@ class WintTitle():
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
             
-            
-           # if self.events == "_BUTTON_GET_IMAGE_PATH":
-                #self.img_path = self.values["_BUTTON_GET_IMAGE_PATH"]
-
-                #pass
-
+            # WIND INIT PROJETOS 
             if self.events == "_BUTTON_PLUS_ADD_Titulo_":
+                self.title  = self.values["INPUT_TITULO_1"]
+                
+                self.windons.close()
+
+                
+            # PROJEOT TASKS 
+            if self.events == "_BUTTON_PLUS_ADD_Titulo_2":
                 self.title      = self.values["INPUT_TITULO"] 
                 self.img_path   = self.values["_BUTTON_GET_IMAGE_PATH"]
 
-                #self.img_path 
+                imagem          = self.coverResize( image_file_name = self.img_path , imagen_resize = (147 , 131 ) )
+    
+                imagem.save( fp = "database/projects_datas/tasksImages/" + str(self.title) + ".png"  ,  format = None)
+                
+                #imagem.show()
+                self.img_path   = "database/projects_datas/tasksImages/" + str(self.title) + ".png"
 
                 self.windons.close()
 
                 
-
         return self.title , self.img_path
+
 
 
 #app = WintTitle()

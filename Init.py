@@ -151,12 +151,12 @@ class WindInitApp():
         if events == "_BUTTON_NEW_PROJECT_DATA_":
             data_hor = datetime.now()
             #-----------------------
-            app     = WintTitle( type_windtitle = "LAYOUT_APP_INIT_PROJECTS_LIST" )
-            name    = app.update()
+            app         = WintTitle( type_windtitle = "LAYOUT_APP_INIT_PROJECTS_LIST" )
+            name , imag = app.update()
             #-----------------------
             
             if name != "":
-                self.dict_name_project["NAME_PR"].append( [name , str( data_hor ) ] )
+                self.dict_name_project["NAME_PR"].append(  [name , str( data_hor ) ]  )
                 #self.dict_name_project["NAME_PR"].append( [name] )
                 
                 
