@@ -1,4 +1,5 @@
 # My-Todo-List-python
+### Esta em desenvolvimento.
 
 ## O que é o My-todo-List ?
 Ainda em inicio de desenvolvimento será um programa com a mesma funcionalidade do famoso Trello só que offline
