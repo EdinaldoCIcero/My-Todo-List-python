@@ -136,7 +136,9 @@ class AppMain():
                             [
                                 sg.Column( self.one_layouts         , background_color = self.background_color ) ,
                                 sg.VSeparator() ,
-                                sg.Column( self.full_tables         , background_color = self.background_color  ) 
+                                sg.Column( self.full_tables         , background_color = self.background_color ,
+                                                                      scrollable        = False,
+                                                                      vertical_scroll_only = False, )
                             ],
 
                             ]
@@ -325,10 +327,10 @@ class AppMain():
                 app                 = WintTitle( type_windtitle = "LAYOUT_APP_TABLES_TASKS" )
                 name , imagem_path  = app.update()
 
-
-                self.windons["IMG_1"].update( PATH_IMAGES_TASKS + "tesseract.png" )
-                self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name , str( data_hor ) , imagem_path ] )
-                self.windons["_TABLE_1_" ].update( values = self.LIST_MATRIZ["TABLES_"]["TABLE_1"]  )
+                if name != "":
+                    #self.windons["IMG_1"].update( PATH_IMAGES_TASKS + "tesseract.png" )
+                    self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name , str( data_hor ) , imagem_path ] )
+                    self.windons["_TABLE_1_" ].update( values = self.LIST_MATRIZ["TABLES_"]["TABLE_1"]  )
 
 
             # ------ SELECT TASKS LISTS -------------------------------------------------------------- 

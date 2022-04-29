@@ -1,0 +1,29 @@
+{
+    "IMGS": {
+        "IMG_COVER_1": "",
+        "IMG_COVER_2": ""
+    },
+    "TABLES_": {
+        "TABLE_1": [
+            [
+                "Task_01",
+                "2022-04-21 19:25:17.240540",
+                "database/projects_datas/tasksImages/Task_01.png"
+            ],
+            [
+                "Task_02",
+                "2022-04-21 19:25:37.974969",
+                "database/projects_datas/tasksImages/Task_02.png"
+            ]
+        ],
+        "TABLE_2": [
+            [
+                "Task_03",
+                "2022-04-21 19:28:07.439006",
+                "database/projects_datas/tasksImages/Task_03.png"
+            ]
+        ],
+        "TABLE_3": [],
+        "TABLE_4": []
+    }
+}

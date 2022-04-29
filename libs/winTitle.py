@@ -31,7 +31,7 @@ class WintTitle():
         self.title              = ""
         self.descriptions_task  = ""
         self.img_path           = ""
-
+        self.descritons         = ""
         #----------- Layouts ----------------------------------------------------------------------------
         self.one_layouts = [                        
                            
@@ -42,10 +42,6 @@ class WintTitle():
                                                 button_type = 7 ,
                                                 button_size = (5 , 2) )] ,
 
-                            
-                            #
-
-                            
                             ]
 
         self.two_layouts = [                        
@@ -75,8 +71,10 @@ class WintTitle():
                             
                             ]
 
+
         #-------------------------------------------------------------------------------------------------------------------
-        layouts_dicts = { "LAYOUT_APP_INIT_PROJECTS_LIST" : self.one_layouts , "LAYOUT_APP_TABLES_TASKS" : self.two_layouts  }
+        layouts_dicts = {   "LAYOUT_APP_INIT_PROJECTS_LIST" : self.one_layouts , 
+                            "LAYOUT_APP_TABLES_TASKS" : self.two_layouts  }
 
         self.windons  = sg.Window( "TITLE",
                                     background_color        = self.background_color,
@@ -131,11 +129,11 @@ class WintTitle():
             if self.events == "_BUTTON_PLUS_ADD_Titulo_2":
                 self.title      = self.values["INPUT_TITULO"] 
                 self.img_path   = self.values["_BUTTON_GET_IMAGE_PATH"]
+                self.descritons = self.values["MULT_DESCRIPTION"]
+
 
                 imagem          = self.coverResize( image_file_name = self.img_path , imagen_resize = (147 , 131 ) )
-    
                 imagem.save( fp = "database/projects_datas/tasksImages/" + str(self.title) + ".png"  ,  format = None)
-                
                 #imagem.show()
                 self.img_path   = "database/projects_datas/tasksImages/" + str(self.title) + ".png"
 
