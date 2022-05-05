@@ -1,3 +1,4 @@
+from cProfile import run
 import os
 from random import randint
 import sys
@@ -6,11 +7,14 @@ import json
 from tkinter.constants import SEL, TRUE
 from traceback import print_tb
 import PySimpleGUI as sg
-from libs.JSON import JsonClass
+
 from pprint import pprint, pformat
 from ast import Pass, literal_eval
+
+
+from libs.JSON import JsonClass
 from libs.winTitle import WintTitle
-from main import AppMain
+from main import AppLayout
 
 from datetime import date, datetime
 
@@ -33,6 +37,8 @@ class WindInitApp():
 
         #-----------------------------------------------------------------------------------------------
         #self.data_hor = datetime.now()
+        
+        self.path_project_files_name  = [ "database/projects_datas/"]
 
         self.trava_comands      = True
         self.buttons_sizes      = (10 , 2)
@@ -41,25 +47,17 @@ class WindInitApp():
 
         self.HEADINGS           = [ " "*10 , "DATA" ]
         
-        self.dict_name_project  = {  "NAME_PR" : PROJECT_NAME["NAME_PR"]  }
+        self.dict_name_project  = PROJECT_NAME
 
         #print( self.data_selected )
 
 
         self.LIST_MATRIZ        = {
-                                    "IMGS" : { 
-                                               "IMG_COVER_1" : "",
-                                               "IMG_COVER_2" : "",
-                                             },
-                                    
-                                    "TABLES_" :{
-                                            "TABLE_1" : [ ],
-                                            "TABLE_2" : [ ],
-                                            "TABLE_3" : [ ],
-                                            "TABLE_4" : [ ]
-                                            }
+                                    "COL_1": [],
+                                    "COL_2": [],
+                                    "COL_3": [],
+                                    "COL_4": []
                                 }
-        
 
         #----------- Layouts ----------------------------------------------------------------------------
         self.one_layouts = [                        
@@ -145,6 +143,10 @@ class WindInitApp():
 
         pass
    
+
+
+
+
     #-------------------------------------------------------------------------------------------------------------------------
     def saveValuesProject( self , events):
         
@@ -178,48 +180,55 @@ class WindInitApp():
         pass
     
     #-------------------------------------------------------------------------------------------------------------------------
-    def saveProj(self , name_project ):
+    def saveProjectInListData(self , list_data_to_save ):
+        
+        self.dict_name_project["NAME_PR"].append( list_data_to_save )
 
-        with open( "database/projects_datas/" + name_project + ".json" , "w" , encoding="utf8") as js_file:
+        with open( "database//projectName.json" , "w" , encoding="utf8") as js_file:
             json.dump( self.dict_name_project , js_file , sort_keys = False, indent = 4)
             pass
-            
-            
-        PROJECTS = JSLOAD.json_read(name_file = "database/projectName" )
-        #self.dict_name_project["NAME_PR"].append( PROJECTS["NAME_PR"] )
+        
+        with open( "database/projects_datas/" + list_data_to_save[0] + ".json" , "w" , encoding="utf8") as js_file:
+            json.dump( self.LIST_MATRIZ , js_file , sort_keys = False, indent = 4)
+            pass
 
+
+
+        PROJECTS = JSLOAD.json_read(name_file = "database/projectName" )
         self.windons["_TABLE_PROJECTS_"].update( values = PROJECTS["NAME_PR"]  )
         
     #-------------------------------------------------------------------------------------------------------------------------
     def selectElementTable(self , events, name_event ):
         
-        if events == name_event :
-           try:
-               table_selected_name = [ self.dict_name_project["NAME_PR"][row] for row in self.values["_TABLE_PROJECTS_"] ][0][0]
-               self.list_name_append.append( table_selected_name )
+        #if events == name_event :
+        try:
+            table_selected_name = [ self.dict_name_project["NAME_PR"][row] for row in self.values["_TABLE_PROJECTS_"] ][0][0]
+            self.list_name_append.append( table_selected_name )
 
-           except:
+        except:
             #print('An exception occurred')
             pass
 
         return self.list_name_append[-1] 
     
     #-------------------------------------------------------------------------------------------------------------------------
-    def deletElement(self , events , table_key , matriz_table_name , name_event ):
+    def deletElement(self , events , table_key , name_event ):
         
 
         if events == name_event :
             try:
-                data_selected = [ self.dict_name_project["NAME_PR"][row] for row in self.values[ table_key ]]
+                PROJECTS = JSLOAD.json_read(name_file = "database/projectName" )
+
+                data_selected = [ PROJECTS["NAME_PR"][row] for row in self.values[ table_key ]]
                 
 
                 for i in data_selected:
-                    self.dict_name_project["NAME_PR"].remove( i )
+                    PROJECTS["NAME_PR"].remove(  i  )
                     
                     project_n =  "database/projects_datas/" + i[0] + ".json"
 
                     with open( "database/" + "projectName.json" , "w" , encoding="utf8") as js_file:
-                        json.dump( self.dict_name_project , js_file , sort_keys = False, indent = 4)
+                        json.dump( PROJECTS , js_file , sort_keys = False, indent = 4)
                         pass
 
                     os.remove( project_n )
@@ -228,9 +237,10 @@ class WindInitApp():
                 #print(" Erro em codigo ---> " , e )
                 pass
 
-            self.windons[ table_key ].update( values = self.dict_name_project["NAME_PR"]  )
+            self.windons[ table_key ].update( values = PROJECTS["NAME_PR"]  )
 
     #-------------------------------------------------------------------------------------------------------------------------
+    
     def update(self):
         while True:
             self.events , self.values = self.windons.Read()#timeout=10
@@ -238,29 +248,33 @@ class WindInitApp():
                 break
             
             try:
-                self.deletElement( events  = self.events , table_key = "_TABLE_PROJECTS_" , matriz_table_name = ""  , name_event = "Excluir" )
-                get_table_name_selected = self.selectElementTable(events = self.events , name_event = "_TABLE_PROJECTS_"  )
-                self.saveValuesProject( events = self.events )
 
-                if self.events == "_BUTTON_OPEN_PROJECT_" and get_table_name_selected != "":
-                    app = AppMain( project_name = str( get_table_name_selected ))
-                    app.main()
-                    pass
-
-                elif self.events == "Abrir" :
-                    app = AppMain( project_name = str( get_table_name_selected ))
-                    app.main()
-                    pass
+                self.deletElement( events = self.events  , table_key = "_TABLE_PROJECTS_"  , name_event = "Excluir" )
+                
+                if self.events == "_BUTTON_NEW_PROJECT_DATA_":
+                    new_project_wind = WintTitle()
+                    new_name_project = new_project_wind.update()
+                    self.saveProjectInListData( list_data_to_save = new_name_project )
 
 
-                else:
-                    #print("Nenhum projeto selecionado")  # Adicionar telinha PopUp #  
-                    pass
+                if self.events == "_BUTTON_OPEN_PROJECT_":
+                    selected = self.selectElementTable( events =  self.events  , name_event = "_TABLE_PROJECTS_")
+                    open_app = AppLayout( project_name =  selected )
+                    open_app.update()
 
-            except TypeError as e :
-                #print(" Erro em codigo ---> " , e )
+
+                if self.events == "Abrir":
+                    selected = self.selectElementTable( events =  self.events  , name_event = "_TABLE_PROJECTS_")
+                    open_app = AppLayout( project_name =  selected )
+                    open_app.update()
+
+
+            except:
                 pass
-            
+
+
+        pass
+
 
 
 #-------------------------------------------------------------------------------------------------------------------------

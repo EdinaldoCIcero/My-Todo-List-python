@@ -1,171 +1,303 @@
 import os
+from pickle import FALSE
 from random import randint
+from re import T
 import sys
 import shutil
-import json 
+import json
 from tkinter.constants import SEL, TRUE
+from tkinter.tix import Tree
 import PySimpleGUI as sg
+
 from libs.JSON import JsonClass
 from pprint import pprint, pformat
 from ast import literal_eval
-from libs.winTitle import WintTitle
+from PIL import Image
 
 
-from datetime import date, datetime
-
-
+from libs.newCard import NewCards
 
 #-----------------------------------------------------------------------------------------------
-JSLOAD           = JsonClass()
+JSLOAD              = JsonClass()
 
 
-COLORS_APP       = JSLOAD.json_read(name_file = "database/appColors" )
-THEME_APP_COLORS = JSLOAD.json_read(name_file = "database/themeApp"  )
+COLORS_APP          = JSLOAD.json_read(name_file = "database/appColors" )
+THEME_APP_COLORS    = JSLOAD.json_read(name_file = "database/themeApp" )
 
-
-PATH_IMAGES_TASKS = "database/projects_datas/tasksImages/"
 #-----------------------------------------------------------------------------------------------
 
+class AppLayout():
+    def __init__(self , project_name ):
+        sg.theme("Dark")
 
-
-
-
-class AppMain():
-    def __init__(self , project_name):
-        sg.theme("Reddit")
-
-        self.project_n =  "database/projects_datas/" + project_name
-        self.load_project_name_datas  = JSLOAD.json_read(name_file = self.project_n )
+        self.name_proj           = project_name
+        self.path_tasks_and_img  = [ "database/projects_datas/" , "database/projects_datas/tasksImages/" ]
+        self.path_datasbase_cols = "database/projects_datas/" + self.name_proj 
+        self.CARDS_DATAS_LOADS   = JSLOAD.json_read( name_file = "database/projects_datas/" + self.name_proj  )
 
         #-----------------------------------------------------------------------------------------------
-        self.LisrTable_values   = []
         self.trava_comands      = True
-        self.buttons_sizes      = (4 , 2)
-        self.background_color   = THEME_APP_COLORS["background"]
-        self.name_selct         = ""
+        self.buttons_sizes      = (5 , 2)
+        self.background_color   = COLORS_APP["PRETO_20%"] #THEME_APP_COLORS["background"]
+        self.colunns_keys       = [ "COL_1" , "COL_2" , "COL_3" , "COL_4"]
+        #--------------------
+        self.index              = 0 
+        self.index_col          = 0
+        self.col_lists_size     = ( 210 , 300 )
+
+        self.list_load_data_cards = self.CARDS_DATAS_LOADS
+
+        #pprint( self.list_load_data_cards )
+        self.database_basic     = {  
+
+                                    "Coluna_1" : [ "Nome do cardTastks " , "descrtion" , "path_img" ],
+
+                                 } 
 
 
-        self.HEADINGS           = [ [ "      FAZER           "] , 
-                                    [ "      FAZENDO         "],
-                                    [ "      APROVAÇÃO       "],
-                                    [ "      APROVADOS       "] ]
+
+        self.card_lists         = {
+                                    "COLUN_1" : [ ] ,
+                                    "COLUN_2" : [ ] ,
+                                    "COLUN_3" : [ ] ,
+                                    "COLUN_4" : [ ] 
+                                  }
+
+
+
+
+        for index_list_col1 , list_values_col1 in enumerate( self.list_load_data_cards[ self.colunns_keys[0] ] ):
+            print( list_values_col1 )
+            card_news_col_1 = self.loadCardsCols(list_load_values = list_values_col1 , col_key_name = self.colunns_keys[0]  )
+            self.card_lists["COLUN_1"].append( card_news_col_1[0] )
+
+        for index_list_col2 , list_values_col2 in enumerate( self.list_load_data_cards[ self.colunns_keys[1] ] ):
+            card_news_col_1 = self.loadCardsCols(list_load_values = list_values_col2 , col_key_name = self.colunns_keys[1]  )
+            self.card_lists["COLUN_2"].append( card_news_col_1[0] )
         
-        self.LIST_MATRIZ        = self.load_project_name_datas
+        for index_list_col3 , list_values_col3 in enumerate( self.list_load_data_cards[ self.colunns_keys[2] ] ):
+            card_news_col_1 = self.loadCardsCols(list_load_values = list_values_col3 , col_key_name = self.colunns_keys[2]  )
+            self.card_lists["COLUN_3"].append( card_news_col_1[0] )
+        
+        for index_list_col4 , list_values_col4 in enumerate( self.list_load_data_cards[ self.colunns_keys[3] ] ):
+            card_news_col_1 = self.loadCardsCols(list_load_values = list_values_col4 , col_key_name = self.colunns_keys[3]  )
+            self.card_lists["COLUN_4"].append( card_news_col_1[0] )
+        
 
-        text_test = """ EDINALDO 
-        AQUI 
-        É 
-        LINHA 
-        E QUEBRAS 
-        """
-        self.list_selecds_name = []
+
+
+
+
         #----------- Layouts ----------------------------------------------------------------------------
-        self.one_layouts = [                        
-                           
-                            #self.layoutText( text_str = "Titulo Project Name" , key_element = "_TEXT_")
 
-                            [self.layoutButtons( text_button = "PLUS" , 
-                                                key_button  = "_BUTTON_PLUS_ADD_T_",
-                                                button_type = 7 ,
-                                                button_size = self.buttons_sizes )] ,
-                            
-                            [self.layoutButtons( text_button = "sAVE" , 
-                                                key_button  = "_BUTTON_SAVE_",
-                                                button_type = 7 ,
-                                                button_size = self.buttons_sizes )],
+        self.text_layout = [
+                        [ sg.Push( background_color = self.background_color ),
 
-                            [self.layoutButtons( text_button = "Configs" , 
-                                                key_button  = "_BUTTON_CONFIGS_",
-                                                button_type = 7 ,
-                                                button_size = self.buttons_sizes )]
-                            
+                        sg.Text("   Fazer"         , text_color = COLORS_APP["BRANCO_1"] , background_color = self.background_color , justification='c', font='Any 20' ),
+                        sg.Push(background_color = self.background_color ),
+
+                        sg.Text("  Fazendo"       , text_color = COLORS_APP["BRANCO_1"] , background_color = self.background_color , justification='c', font='Any 20' ),
+                        sg.Push(background_color = self.background_color ),    
+
+                        sg.Text("  Aprovados"     , text_color = COLORS_APP["BRANCO_1"] , background_color = self.background_color , justification='c', font='Any 20' ),
+                        sg.Push(background_color = self.background_color ),
+
+                        sg.Text(" Finalizados"   , text_color = COLORS_APP["BRANCO_1"] , background_color = self.background_color , justification='c', font='Any 20' ),
+                        sg.Push(background_color = self.background_color ) ]
                             ]
 
-        #--------------------------------------------------------------------------------------------------------------------
-        self.table_1    = [
-                            self.tabelas(   list_heanding       = self.HEADINGS[0]  , 
-                                            list_values_table   = self.LIST_MATRIZ["TABLES_"]["TABLE_1"] , 
-                                            event_mouse_right   = [ "tabela_1" , ["Avançar_1" ,"Voltar_1" , "Excluir_1" ] ] ,
-                                            key                 = "_TABLE_1_") 
+
+        self.button_lay  = [
+
+                            [
+                            self.layoutButtons( text_button = "PLUS" , key_button  = "_ADD_", 
+                                                 button_type = 7      , button_size = (5 , 2) ),
+
+                            self.layoutButtons( text_button = "Conf" , key_button  = "_ADD_",
+                                                 button_type = 7      , button_size = (5 , 2) )
                             ]
 
-        self.table_2    = [  
-                             self.tabelas(  list_heanding       = self.HEADINGS[1] , 
-                                            list_values_table   = self.LIST_MATRIZ["TABLES_"]["TABLE_2"] ,
-                                            event_mouse_right   = [ "tabela_2" , ["Avançar_2" ,"Voltar_2" , "Excluir_2" ] ] ,
-                                            key                 = "_TABLE_2_") ]
+                            ]
+
+        self.layouts_col = [
+
+                            [
+                            sg.Column(  self.card_lists["COLUN_1"] ,
+                                        background_color    = self.background_color, size = self.col_lists_size,
+                                        scrollable          = True, vertical_scroll_only  = True, 
+                                        expand_x            = True, expand_y              = True,
+                                        vertical_alignment  = "center", 
+                                        pad                 = 0 , 
+                                        key                 = self.colunns_keys[0],
+                                        #sbar_trough_color   = self.background_color,
+                                        
+                                        #sbar_background_color   = self.background_color,
+                                        #sbar_arrow_color        = self.background_color,
+                                        #sbar_width              = 3,
+                                        #sbar_arrow_width        = 4,
+                                        #sbar_frame_color        = self.background_color
+                                        
+                                        ),
 
 
-        self.table_3    = [ 
-                            self.tabelas(  list_heanding        = self.HEADINGS[2]  , 
-                                            list_values_table   = self.LIST_MATRIZ["TABLES_"]["TABLE_3"] ,
-                                            event_mouse_right   = [ "tabela_3" , ["Avançar_3" ,"Voltar_3" , "Excluir_3" ] ] ,
-                                            key                 = "_TABLE_3_") ]
+                            #sg.Push(background_color = self.background_color ) ,
+                            sg.Column(  self.card_lists["COLUN_2"],
+                                        background_color    = self.background_color, size = self.col_lists_size,
+                                        scrollable          = True, vertical_scroll_only  = True, 
+                                        expand_x            = True, expand_y              = True,
+                                        vertical_alignment  = "center",
+                                        pad                 = 0    , 
+                                        key                 = self.colunns_keys[1] ),
+                            
+
+                            #sg.Push(background_color = self.background_color ) ,
+                            sg.Column(  self.card_lists["COLUN_3"] ,
+                                        background_color    = self.background_color,
+                                        size                = self.col_lists_size,
+                                        scrollable          = True, vertical_scroll_only = True, 
+                                        expand_x            = True, expand_y             = True,
+                                        vertical_alignment  = "center", 
+                                        pad                 = 0   ,
+                                        key                 = self.colunns_keys[2] ),
+                            
+
+                            #sg.Push(background_color = self.background_color ) ,
+                            sg.Column(  self.card_lists["COLUN_4"] ,
+                                        background_color    = self.background_color,
+                                        size                = self.col_lists_size,
+                                        scrollable          = True, vertical_scroll_only = True, 
+                                        expand_x            = True, expand_y             = True,
+                                        vertical_alignment  = "center", 
+                                        pad                 = 0   , 
+                                        key                 = self.colunns_keys[3] ),
+
+                            ]
+
+                        ]
 
 
-        self.table_4    = [ 
-                            self.tabelas(   list_heanding       = self.HEADINGS[3]  , 
-                                            list_values_table   = self.LIST_MATRIZ["TABLES_"]["TABLE_4"] ,
-                                            event_mouse_right   = [ "tabela_4" , ["Avançar_4" ,"Voltar_4" , "Excluir_4" ] ],
-                                            key                 = "_TABLE_4_") ]
 
-
-        self.full_tables = [
-                            #[sg.Canvas(size = ( 147 , 131 )) , sg.Canvas(size = ( 714 , 131 ))],
+        self.Full_layouts = [
                              
+                            self.button_lay,
 
-                            #self.layoutText( text_str = text_test ),
-                            [sg.Image("imgs/tesseract.png", size=(147 , 131 ), key="IMG_1") , 
-                            self.layoutText( text_str = text_test ) , 
-                            self.layoutText( text_str = "DESCRIPTIONS TASKS" ) ],
-                            [sg.HSeparator() ],
-
-                            [
-                                sg.Column( self.table_1     , background_color = self.background_color) ,
-                                sg.Column( self.table_2     , background_color = self.background_color  ),
-                                #sg.VSeparator() ,
-                                sg.Column( self.table_3     , background_color = self.background_color ) ,
-                                sg.Column( self.table_4     , background_color = self.background_color ) ,
-                            ]
+                            #[ sg.Column( self.button_lay    , background_color = COLORS_APP["BRANCO_1"]  , pad = 0 , size = (60 , 10) ,   expand_x = False, expand_y = True  )] ,
                             
-                           ]
-        
-        #--------------------------------------------------------------------------------------------------------------------
-        self.full_layouts = [ 
+                            [ sg.Column( self.text_layout  , background_color = self.background_color  , element_justification = "center", pad = 0 , expand_x = True, expand_y = False  ) ],
 
-                            [
-                                sg.Column( self.one_layouts         , background_color = self.background_color ) ,
-                                sg.VSeparator() ,
-                                sg.Column( self.full_tables         , background_color = self.background_color ,
-                                                                      scrollable        = False,
-                                                                      vertical_scroll_only = False, )
-                            ],
+                            [ sg.Column( self.layouts_col   , background_color = self.background_color   , pad = 10 , expand_x = True, expand_y = True  ) ]
 
                             ]
 
-        #--------------------------------------------------------------------------------------------------------------------
-        self.windons  = sg.Window( "My-Tod-List",
-                                    background_color        = self.background_color,
-                                    size                    = (1123 , 600),
-                                    #icon                = "Icon.ico",
-                                    #titlebar_icon       = base64.icone , 
-                                    #use_custom_titlebar = False ,
-                                    return_keyboard_events  = True  ,
-                                    use_default_focus       = False ,
-                                    resizable               = True
 
-                                    ).layout(self.full_layouts)
+        self.windons =  sg.Window( "TITLE",
+                            background_color        = self.background_color,
+                            size                    = (1024 , 600) ,
+                            #icon                   = "Icon.ico",
+                            #titlebar_icon          = base64.icone , 
+                            #use_custom_titlebar    = False ,
+                            return_keyboard_events  = True  ,
+                            use_default_focus       = False ,
+                            resizable               = True ,
+                            finalize                = False ).layout( self.Full_layouts  )
+        
 
-    #--------------------------------------------------------------------------------------------------------------------
-    def layoutText(self , text_str  , key_element = "_TEXT_"):
-        texts = sg.Text( text_str , 
-                        text_color          = COLORS_APP["BRANCO_1"],
-                        background_color    = self.background_color,
-                        key                 = key_element 
-                        )
-        return texts        
 
-    #--------------------------------------------------------------------------------------------------------------------
+        #-------------------------------------------------------------------------------------------------------------------
+    def loadCardsCols(self , list_load_values , col_key_name ):
+
+        card_make   = self.newCardTask( col_name        = col_key_name , 
+                                        title_card      = list_load_values[0] , 
+                                        img_card        = list_load_values[2] , 
+                                        descrtions_card = list_load_values[1] 
+                                        )
+
+        return card_make
+
+
+    def newCardTask(self  , col_name  , title_card , img_card , descrtions_card ):
+        global index
+
+        colunn_name     = col_name
+
+        self.index      += 1
+        back_color      = COLORS_APP["BRANCO_2"]
+
+
+        # -------------------------------------------------------------------------------------------
+        lay_imagem   = [ [sg.Image( img_card , pad = 4 , size=( 60 , 60 ), key="IMG_") ] ]
+                       
+
+        layout_texts = [
+                        [ sg.Text( "Responsavel : "  , text_color = COLORS_APP["PRETO_0"] , pad = 0 , background_color = back_color , font ='Any 8'),
+                          sg.Text( "Nome"            , text_color = COLORS_APP["PRETO_0"] , pad = 0 , background_color = back_color , font ='Any 8' , key= "_NOME_P") ], 
+                        [sg.Text(  "Data/Hora"       , text_color = COLORS_APP["PRETO_0"] , pad = 0 , background_color = back_color , font ='Any 8' , key= "_DATA_HORA_")],
+                        [sg.Text(  descrtions_card   , text_color = COLORS_APP["PRETO_0"] , pad = 0 , background_color = back_color , font ='Any 8' , key= "_DESCRTION_")]
+
+        
+                        # [sg.Multiline(  default_text     = "Digite uma descrição caso queira.",
+                        #                size             = (10, 6),
+                        #                background_color = COLORS_APP["BRANCO_1"] ,
+                        #                text_color       = COLORS_APP["PRETO_0"] , 
+                        #                key              = "descrition_out"
+                        #                )]
+
+
+                        ]
+
+        
+
+        layout_buttons3 = [ 
+                            [sg.Button('<', key = ('voltar'   , self.index  , colunn_name , title_card ) , pad = 1 ,size = ( 2 , 1 ) )],
+                            [sg.Button('X', key = ('X'        , self.index  , colunn_name , title_card ) , pad = 1 ,size = ( 2 , 1 ) )],
+                            [sg.Button('>', key = ('avancar'  , self.index  , colunn_name , title_card ) , pad = 1 ,size = ( 2 , 1 ) )],
+                          ]
+
+
+        full_layout = [ 
+                        [sg.Canvas(background_color = COLORS_APP["PRETO_0"] , pad = 0 , size = ( 220 , 2 ) )] ,
+
+                        [
+                        sg.Column( lay_imagem       , background_color = back_color , pad = 0 ,expand_x = True, expand_y = True  ),
+                        #sg.Push(background_color = self.background_color ),
+
+                        sg.Column( layout_texts     , background_color = back_color , pad = 0 ,expand_x = True, expand_y = True  ),
+                        #sg.Push(background_color = self.background_color ),
+
+                        sg.Column( layout_buttons3  , background_color = back_color , pad = 0 ,expand_x = True, expand_y = True  )
+                        ]
+
+                      ]
+
+        return [
+                [sg.Frame( title_card ,
+                            full_layout,
+                            font             = 'Any 15' ,
+                            title_color      = COLORS_APP["PRETO_0"],
+                            background_color = back_color ,  #COLORS_APP[ list_colors_name[ ran_color ] ],
+                            size             = ( 230 , 130 ),
+                            border_width     = 0,
+                            pad              = 2,
+                            expand_x         = True,
+                            expand_y         = True,
+                            key              = "Frame" + str( self.index )  ),
+                ]
+                ]
+
+                
+
+
+
+    def deleteCardTask(self , widget):
+        children = list(widget.children.values())
+
+        for child in children:
+            self.deleteCardTask(child)
+
+        widget.pack_forget()
+        widget.destroy()
+        del widget
+
     def layoutButtons(self , text_button , key_button , button_type , button_size):
         buttons = sg.Button(   button_text           = text_button,
                                 button_color         = (self.background_color, COLORS_APP["AZUL_CLARO"]) ,
@@ -179,229 +311,246 @@ class AppMain():
 
         return buttons
 
-        pass
-
-    #--------------------------------------------------------------------------------------------------------------------
-    def tabelas( self , list_heanding , list_values_table , event_mouse_right ,  key  ):
-
-        tablets =   [sg.Table(
-                        values                  = list_values_table, 
-                        headings                = list_heanding,
-                        select_mode             = sg.TABLE_SELECT_MODE_BROWSE,
-                        #change_submits          = False,
-                        justification           = 'center',
-                        text_color              = COLORS_APP["SINZA_CLARO_1"],
-                        background_color        = COLORS_APP["BRANCO_2"],
-                        selected_row_colors     = (COLORS_APP["BRANCO_1"] , COLORS_APP["VERDE_CLARO"] ),
-                        header_background_color = COLORS_APP["AZUL_CLARO"],
-                        
-                        enable_events           = True,
-                        enable_click_events     = True,
-                        bind_return_key         = True,
-                        alternating_row_color   = COLORS_APP["LARANJA"],
-                        expand_x                = True,
-                        expand_y                = True,
-                        size                    = ( 10 , 10 ),
-                        key                     = key,
-                        right_click_menu        = event_mouse_right ,
-                        pad                     = 0 ,
-                        row_height              = 40,
-                        col_widths              = [0 , 0, 0, 0],
-                        hide_vertical_scroll    = True
-                    )]
-
-        return tablets
-    
-    #--------------------------------------------------------------------------------------------------------------------
-    def list_files(self , path_files):
-        files = path_files
-
-        try:
-            file_list = os.listdir(files)
-        except:
-            file_list = []
-
-        file_names = [fileN for fileN in file_list if os.path.isfile(os.path.join(files,fileN))
-        and fileN.lower().endswith((".dtsl"))] 
-
-        return file_names
-
-    #--------------------------------------------------------------------------------------------------------------------    
-    def saveValuesProject( self , events ):
-
-        dict_project        = {
-                                    "IMGS" : { 
-                                               "IMG_COVER_1" : "",
-                                               "IMG_COVER_2" : "",
-                                             },
-                                    
-                                    "TABLES_" :{
-                                            "TABLE_1" : self.LIST_MATRIZ["TABLES_"]["TABLE_1"],
-                                            "TABLE_2" : self.LIST_MATRIZ["TABLES_"]["TABLE_2"],
-                                            "TABLE_3" : self.LIST_MATRIZ["TABLES_"]["TABLE_3"],
-                                            "TABLE_4" : self.LIST_MATRIZ["TABLES_"]["TABLE_4"]
-                                            }
-                                }
-        
-        if events == "_BUTTON_SAVE_":
-            with open( self.project_n + '.json', "w" , encoding="utf8") as js_file:
-                json.dump( dict_project , js_file , sort_keys = False, indent = 4)
-                pass
+    def saveValuesCardsTasks( self , value_list_database ):
+       
+        with open( self.path_datasbase_cols + '.json', "w" , encoding="utf8") as js_file:
+            json.dump( value_list_database , js_file , sort_keys = False, indent = 4)
+            pass
 
         pass
-    
-    #--------------------------------------------------------------------------------------------------------------------    
-    def selectElementTable(self , table_key , table_data_value_name ):
-        data_selected = [ self.load_project_name_datas["TABLES_"][ table_data_value_name ][row] for row in self.values[table_key] ]
-        
-        return data_selected
 
-    #--------------------------------------------------------------------------------------------------------------------    
-    def passList(self , events , event_name , matriz_table_name_1 , table_key_1 , matriz_table_name_2 ,  table_key_2   ):
-        
-        if events == event_name :
-            try:
-                data_selected_pass = self.selectElementTable( table_key = table_key_1 , table_data_value_name = matriz_table_name_1 )
-                print( data_selected_pass )
+    def saveDatabaseCardsTasks(self ,list_values , col_key_add , col_key_del ):
 
-                self.LIST_MATRIZ["TABLES_"][ matriz_table_name_2 ].append( data_selected_pass[0] )
+        self.list_load_data_cards[ col_key_add ].append( list_values )
+        self.list_load_data_cards[ col_key_del ].remove( list_values )
 
-                for i in data_selected_pass:
-                    self.LIST_MATRIZ["TABLES_"][ matriz_table_name_1 ].remove( i )
-           
-
-            except TypeError as erro :
-                print('An exception occurred Fun( passList ) -- >' , erro )
-                pass
+        with open( self.path_datasbase_cols + '.json', "w" , encoding="utf8") as js_file:
+            json.dump( self.list_load_data_cards , js_file , sort_keys = False, indent = 4)
 
 
-            self.windons[ table_key_1 ].update( values = self.LIST_MATRIZ["TABLES_"][ matriz_table_name_1 ] )
-            self.windons[ table_key_2 ].update( values = self.LIST_MATRIZ["TABLES_"][ matriz_table_name_2 ]  )
+        pass
 
-     #--------------------------------------------------------------------------------------------------------------------    
-    def selectElementTableIMAGEN(self , events, table_key , table_data_value_name ):
-        
-        if events == table_key :
-            try:
-                data_selected = self.selectElementTable( table_key = table_key , table_data_value_name = table_data_value_name )
+    def update(self):
 
-                for i in data_selected:
-                    self.windons["IMG_1"].update( str( i[2] ) )
-
-            except TypeError as faledErro:
-                
-                print('An exception occurred func( selectElementTableIMAGEN ) ---> ' , faledErro)
-                pass
-
-
-    #--------------------------------------------------------------------------------------------------------------------
-    def deletElement(self , events , table_key , matriz_table_name , name_event ):
-
-        if events == name_event :
-            try:
-                data_selected_delet = self.selectElementTable( table_key = table_key , table_data_value_name = matriz_table_name )
-
-                for i in data_selected_delet:
-                    self.LIST_MATRIZ["TABLES_"][ matriz_table_name ].remove( i )
-                    print( i )
-                    os.remove( str( i[2] ) )
-                    
-            except TypeError as erro :
-                print('An exception occurred func( deletElement ) -- >' , erro )
-                pass
-
-            self.windons[ table_key ].update( values = self.LIST_MATRIZ["TABLES_"][ matriz_table_name ] )
-
-
-    #--------------------------------------------------------------------------------------------------------------------
-    def main(self):
-        
         while True:
-            self.events , self.values = self.windons.Read()#timeout=10
+            self.events , self.values = self.windons.Read( )#timeout=10
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
             
-            #------------ CONDIÇÃO PARA ADICIONAR UMA NOVA TAREFA NA PRIMEIRA LISTA -------------------
-            if self.events == "_BUTTON_PLUS_ADD_T_":
-                data_hor            = datetime.now()
-                app                 = WintTitle( type_windtitle = "LAYOUT_APP_TABLES_TASKS" )
-                name , imagem_path  = app.update()
-
-                if name != "":
-                    #self.windons["IMG_1"].update( PATH_IMAGES_TASKS + "tesseract.png" )
-                    self.LIST_MATRIZ["TABLES_"]["TABLE_1"].append( [ name , str( data_hor ) , imagem_path ] )
-                    self.windons["_TABLE_1_" ].update( values = self.LIST_MATRIZ["TABLES_"]["TABLE_1"]  )
-
-
-            # ------ SELECT TASKS LISTS -------------------------------------------------------------- 
-            
-            self.selectElementTableIMAGEN( events = self.events, table_key = "_TABLE_1_" , table_data_value_name = "TABLE_1" )
-            self.selectElementTableIMAGEN( events = self.events, table_key = "_TABLE_2_" , table_data_value_name = "TABLE_2" )
-            self.selectElementTableIMAGEN( events = self.events, table_key = "_TABLE_3_" , table_data_value_name = "TABLE_3" )
-            self.selectElementTableIMAGEN( events = self.events, table_key = "_TABLE_4_" , table_data_value_name = "TABLE_4" )
-
-            
- 
-            #--------- DELETANDO TARAFAS DAS LISTA ----------------------------------------------
-            self.deletElement(  events              = self.events   , table_key   = "_TABLE_1_" , 
-                                matriz_table_name   = "TABLE_1"     , name_event  = "Excluir_1" )
-
-            
-            self.deletElement(  events              = self.events   , table_key   = "_TABLE_2_" ,
-                                matriz_table_name   = "TABLE_2"     , name_event  = "Excluir_2" )      
-
-            self.deletElement(  events              = self.events   , table_key   = "_TABLE_3_" , 
-                                matriz_table_name   = "TABLE_3"     , name_event  = "Excluir_3" ) 
-
-            self.deletElement(  events              = self.events   , table_key   = "_TABLE_4_" , 
-                                matriz_table_name   = "TABLE_4"     , name_event  = "Excluir_4" )      
+            if self.index_col >= 3:
+                self.index_col = 4
             
 
-            #--------- PASSANDO AS TAREFAS DE TABELA EM TABELA  --------------------------------------
+            try :
+                if self.events == "_ADD_":
+                    self.index_col = 0
+                    
+                    app_new_car      = NewCards()
+                    card_list_values = app_new_car.update()
 
-            self.passList(  events              = self.events   , event_name   = "Avançar_1"  , 
-                            matriz_table_name_1 = "TABLE_1"     , table_key_1  =  "_TABLE_1_" , 
-                            matriz_table_name_2 = "TABLE_2"     , table_key_2  =  "_TABLE_2_"  )
+                    #card_values_load = JSLOAD.json_read( name_file = "database/projects_datas/" + name_card )
+                    #values_list      = card_values_load[ name_card ]
 
+                    self.windons[ self.colunns_keys[0] ].Widget.update()
+                    self.windons[ self.colunns_keys[0] ].contents_changed()
+
+                    self.windons.extend_layout(  self.windons[ self.colunns_keys[0] ] , 
+                                                self.newCardTask(  col_name        = self.colunns_keys[0] , 
+                                                                    title_card      = card_list_values[0] , 
+                                                                    img_card        = card_list_values[2] , 
+                                                                    descrtions_card = card_list_values[1] ) )
+                    
+                    self.list_load_data_cards[ self.colunns_keys[0] ].append( card_list_values )
+                    
+                    self.saveValuesCardsTasks( value_list_database = self.list_load_data_cards )
+
+
+            #----------------------------------------------------------------------
+            #----------------------------------------------------------------------
+
+                if self.events[0] == "avancar":
+
+                    events_key_n         = self.events[1]
+                    events_key_n_col     = self.events[2]
+                    events_key_name_card = self.events[3]
+
+
+                    name_key_widgets = 'Frame' + str( events_key_n )
+                    widget           = self.windons[ name_key_widgets ].Widget
+
+                    card_values_load = JSLOAD.json_read( name_file = self.path_datasbase_cols )
+                    values_list      = card_values_load[ events_key_n_col ][0]
+
+
+                    # AVANÇO DA COLUNA 1 PARA A 3 ----------------------------------------------------------------------
+                    #---------------------------------------------------------------------------------------------------
+                    if events_key_n_col == self.colunns_keys[0] :
+
+                        self.saveDatabaseCardsTasks( list_values = values_list , 
+                                                    col_key_add = self.colunns_keys[1] , 
+                                                    col_key_del = self.colunns_keys[0] )
+
+                        self.windons[ self.colunns_keys[1] ].Widget.update()
+                        self.windons[ self.colunns_keys[1] ].contents_changed()
+                        self.windons.extend_layout(  self.windons[ self.colunns_keys[1] ] , 
+                                                    self.newCardTask(   col_name        = self.colunns_keys[1] , 
+                                                                        title_card      = values_list[0] , 
+                                                                        img_card        = values_list[2] , 
+                                                                        descrtions_card = values_list[1]  ) )
+
+                        del self.windons.AllKeysDict[ name_key_widgets]
+                        self.deleteCardTask( widget.master )
+
+
+                    # AVANÇO DA COLUNA 2 PARA A 3----------------------------------------------------------------------
+                    #---------------------------------------------------------------------------------------------------
+                    if events_key_n_col == self.colunns_keys[1]:
+                        
+                        self.saveDatabaseCardsTasks( list_values = values_list , 
+                                                    col_key_add = self.colunns_keys[2] , 
+                                                    col_key_del = self.colunns_keys[1] )
+
+                        self.windons[ self.colunns_keys[2] ].Widget.update()
+                        self.windons[ self.colunns_keys[2] ].contents_changed()
+
+                        self.windons.extend_layout(  self.windons[  self.colunns_keys[2] ] , 
+                                                    self.newCardTask(  col_name        = self.colunns_keys[2] , 
+                                                                        title_card      = values_list[0] , 
+                                                                        img_card        = values_list[2] , 
+                                                                        descrtions_card = values_list[1] ) )
+
+                        del self.windons.AllKeysDict[ name_key_widgets ]
+                        self.deleteCardTask( widget.master )
+
+                        
+                    # AVANÇO DA COLUNA 3 PARA A 4 ----------------------------------------------------------------------
+                    #---------------------------------------------------------------------------------------------------
+                    if events_key_n_col == self.colunns_keys[2]:
+
+                        self.saveDatabaseCardsTasks( list_values = values_list , 
+                                                    col_key_add = self.colunns_keys[3] , 
+                                                    col_key_del = self.colunns_keys[2] )
+
+                        self.windons[ self.colunns_keys[3] ].Widget.update()
+                        self.windons[ self.colunns_keys[3] ].contents_changed()
+
+                        self.windons.extend_layout(  self.windons[  self.colunns_keys[3] ] , 
+                                                    self.newCardTask(  col_name        = self.colunns_keys[3] , 
+                                                                        title_card      = values_list[0] , 
+                                                                        img_card        = values_list[2] , 
+                                                                        descrtions_card = values_list[1] ) )
+
+                        del self.windons.AllKeysDict[ name_key_widgets ]
+                        self.deleteCardTask( widget.master )
+                #---------------------------------------------------------------------------------------------------------
+
+
+                if self.events[0] == "voltar":
+
+                    events_key_n         = self.events[1]
+                    events_key_n_col     = self.events[2]
+                    events_key_name_card = self.events[3]
+
+
+                    name_key_widgets = 'Frame' + str( events_key_n )
+                    widget           = self.windons[ name_key_widgets ].Widget
+
+                    card_values_load = JSLOAD.json_read( name_file = self.path_datasbase_cols )
+                    values_list      = card_values_load[ events_key_n_col ][0]
+
+
+                    # AVANÇO DA COLUNA 1 PARA A 3 ----------------------------------------------------------------------
+                    #---------------------------------------------------------------------------------------------------
+                    if events_key_n_col == self.colunns_keys[3] :
+
+                        self.saveDatabaseCardsTasks( list_values = values_list , 
+                                                    col_key_add = self.colunns_keys[2] , 
+                                                    col_key_del = self.colunns_keys[3] )
+
+                        self.windons[ self.colunns_keys[2] ].Widget.update()
+                        self.windons[ self.colunns_keys[2] ].contents_changed()
+                        self.windons.extend_layout(  self.windons[ self.colunns_keys[2] ] , 
+                                                    self.newCardTask(   col_name        = self.colunns_keys[2] , 
+                                                                        title_card      = values_list[0] , 
+                                                                        img_card        = values_list[2] , 
+                                                                        descrtions_card = values_list[1]  ) )
+
+                        del self.windons.AllKeysDict[ name_key_widgets]
+                        self.deleteCardTask( widget.master )
+
+
+                    # AVANÇO DA COLUNA 2 PARA A 3----------------------------------------------------------------------
+                    #---------------------------------------------------------------------------------------------------
+                    if events_key_n_col == self.colunns_keys[2]:
+                        
+                        self.saveDatabaseCardsTasks( list_values = values_list , 
+                                                    col_key_add = self.colunns_keys[1] , 
+                                                    col_key_del = self.colunns_keys[2] )
+
+                        self.windons[ self.colunns_keys[1] ].Widget.update()
+                        self.windons[ self.colunns_keys[1] ].contents_changed()
+
+                        self.windons.extend_layout(  self.windons[  self.colunns_keys[1] ] , 
+                                                    self.newCardTask(  col_name        = self.colunns_keys[1] , 
+                                                                        title_card      = values_list[0] , 
+                                                                        img_card        = values_list[2] , 
+                                                                        descrtions_card = values_list[1] ) )
+
+                        del self.windons.AllKeysDict[ name_key_widgets ]
+                        self.deleteCardTask( widget.master )
+
+                        
+                    # AVANÇO DA COLUNA 3 PARA A 4 ----------------------------------------------------------------------
+                    #---------------------------------------------------------------------------------------------------
+                    if events_key_n_col == self.colunns_keys[1]:
+
+                        self.saveDatabaseCardsTasks( list_values = values_list , 
+                                                    col_key_add = self.colunns_keys[0] , 
+                                                    col_key_del = self.colunns_keys[1] )
+
+                        self.windons[ self.colunns_keys[0] ].Widget.update()
+                        self.windons[ self.colunns_keys[0] ].contents_changed()
+
+                        self.windons.extend_layout(  self.windons[  self.colunns_keys[0] ] , 
+                                                    self.newCardTask(  col_name        = self.colunns_keys[0] , 
+                                                                        title_card      = values_list[0] , 
+                                                                        img_card        = values_list[2] , 
+                                                                        descrtions_card = values_list[1] ) )
+
+                        del self.windons.AllKeysDict[ name_key_widgets ]
+                        self.deleteCardTask( widget.master )
+
+
+
+                # DELETAMENTO DOS CARDSTASKS -----------------------------------------------------------------------
+                #---------------------------------------------------------------------------------------------------
+                elif self.events[0] == 'X':
+                    i                    = self.events[1]
+                    events_key_n_col     = self.events[2]
+                    events_key_name_card = self.events[3]
+
+                    name_key_widgets = 'Frame' + str( i )
+                    widget           = self.windons[ name_key_widgets ].Widget
+
+                    card_values_load = JSLOAD.json_read( name_file = self.path_datasbase_cols )
+                    values_list      = card_values_load[ events_key_n_col ][0]
+
+                    name_img_task    = str( self.path_tasks_and_img[1] +  events_key_name_card + ".png" )
+
+                    del self.windons.AllKeysDict[ name_key_widgets ]
+                    self.deleteCardTask( widget.master )
+                    
+                    self.list_load_data_cards[ events_key_n_col ].remove( values_list )
+                    os.remove(  name_img_task )
             
-            self.passList(  events              = self.events   , event_name   = "Avançar_2"  , 
-                            matriz_table_name_1 = "TABLE_2"     , table_key_1  =  "_TABLE_2_" , 
-                            matriz_table_name_2 = "TABLE_3"     , table_key_2  =  "_TABLE_3_"    
-                        )
-
-            self.passList(  events              = self.events   , event_name   = "Avançar_3"  , 
-                            matriz_table_name_1 = "TABLE_3"     , table_key_1  =  "_TABLE_3_" , 
-                            matriz_table_name_2 = "TABLE_4"     , table_key_2  =  "_TABLE_4_"  
-                            )
-            
-            #----- FUNÇÃO RESPONSAVEL POR SALVAR AS ALTERAÇÕES ---------------------------------------
-            self.saveValuesProject( events = self.events )
+                #---------------------------------------------------------------------------------------------------
 
 
-            #-------------VOLTANDO ELEMENTOS ENTRE LISTAS -----------------------------------------------
-            
-            self.passList(  events              = self.events   , event_name   = "Voltar_2"  , 
-                            matriz_table_name_1 = "TABLE_2"     , table_key_1  =  "_TABLE_2_" , 
-                            matriz_table_name_2 = "TABLE_1"     , table_key_2  =  "_TABLE_1_"    
-                        )
-            
-            self.passList(  events              = self.events   , event_name   = "Voltar_3"  , 
-                            matriz_table_name_1 = "TABLE_3"     , table_key_1  =  "_TABLE_3_" , 
-                            matriz_table_name_2 = "TABLE_2"     , table_key_2  =  "_TABLE_2_"    
-                        )
-
-            self.passList(  events              = self.events   , event_name   = "Voltar_4"  , 
-                            matriz_table_name_1 = "TABLE_4"     , table_key_1  =  "_TABLE_4_" , 
-                            matriz_table_name_2 = "TABLE_3"     , table_key_2  =  "_TABLE_3_"    
-                        )
-            
-           
+            except TypeError as printErro:
+                print( f' Esse é o erro --> { printErro }')
+                pass
+       
 
 
-            
-
-
-
-
-#app = AppMain( project_name = "s")
-#app.main()
+#app = AppLayout()
+#app.update()

@@ -10,3 +10,9 @@ class JsonClass():
 			return json.load(js_file)
 
 		pass
+
+	def json_save( self , name_file , values ):
+		with open( name_file + '.json', "w" , encoding="utf8") as js_file:
+			json.dump( values , js_file , sort_keys = False, indent = 4)
+		
+		pass
