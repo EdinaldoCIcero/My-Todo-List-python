@@ -9,7 +9,7 @@ from libs.JSON import JsonClass
 from pprint import pprint, pformat
 from ast import literal_eval
 from PIL import Image
-
+from datetime import date, datetime
 
 #-----------------------------------------------------------------------------------------------
 JSLOAD           = JsonClass()
@@ -96,7 +96,7 @@ class WintTitle():
                 self.windons.close()
 
                 
-        return [ self.title ] 
+        return self.title  
 
 
 #app = WintTitle()

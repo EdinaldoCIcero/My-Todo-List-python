@@ -1,4 +1,5 @@
 from cProfile import run
+from hashlib import new
 import os
 from random import randint
 import sys
@@ -19,8 +20,6 @@ from main import AppLayout
 from datetime import date, datetime
 
 
-
-
 #-----------------------------------------------------------------------------------------------
 JSLOAD           = JsonClass()
 
@@ -29,21 +28,20 @@ THEME_APP_COLORS = JSLOAD.json_read(name_file = "database/themeApp" )
 PROJECT_NAME     = JSLOAD.json_read(name_file = "database/projectName" )
 
 
-
 #-----------------------------------------------------------------------------------------------
 class WindInitApp():
     def __init__(self ):
-        sg.theme("Reddit")
+        sg.theme("Dark")
 
         #-----------------------------------------------------------------------------------------------
-        #self.data_hor = datetime.now()
+        self.data_hor = datetime.now()
         
         self.path_project_files_name  = [ "database/projects_datas/"]
 
         self.trava_comands      = True
         self.buttons_sizes      = (10 , 2)
         self.background_color   = THEME_APP_COLORS["background"]
-        self.list_name_append        = [""]
+        self.list_name_append   = [""]
 
         self.HEADINGS           = [ " "*10 , "DATA" ]
         
@@ -75,9 +73,9 @@ class WindInitApp():
                                                 button_size = self.buttons_sizes )
                             ],
 
-                            [ self.tabelas( list_heanding = self.HEADINGS  , 
+                            [ self.tabelas( list_heanding     = self.HEADINGS  , 
                                             list_values_table =  PROJECT_NAME["NAME_PR"]  , 
-                                            key = "_TABLE_PROJECTS_") ]
+                                            key               = "_TABLE_PROJECTS_") ]
 
                             ]
 
@@ -116,11 +114,11 @@ class WindInitApp():
                         expand_x                = True,
                         expand_y                = True,
 
-                        size                    = ( 5 , 8 ),
+                        size                    = ( 2 , 2 ),
                         key                     = key,
                         right_click_menu        = [ "menu" , ["Abrir" , "Excluir"] ],
                         pad                     = 0 ,
-                        row_height              = 40,
+                        row_height              = 60 ,
                         col_widths              = [0 , 0, 0, 0],
                         hide_vertical_scroll    = True
                     )]
@@ -140,12 +138,6 @@ class WindInitApp():
                     )
 
         return buttons
-
-        pass
-   
-
-
-
 
     #-------------------------------------------------------------------------------------------------------------------------
     def saveValuesProject( self , events):
@@ -254,7 +246,7 @@ class WindInitApp():
                 if self.events == "_BUTTON_NEW_PROJECT_DATA_":
                     new_project_wind = WintTitle()
                     new_name_project = new_project_wind.update()
-                    self.saveProjectInListData( list_data_to_save = new_name_project )
+                    self.saveProjectInListData( list_data_to_save = [ new_name_project , str( self.data_hor ) ] )
 
 
                 if self.events == "_BUTTON_OPEN_PROJECT_":
@@ -267,7 +259,6 @@ class WindInitApp():
                     selected = self.selectElementTable( events =  self.events  , name_event = "_TABLE_PROJECTS_")
                     open_app = AppLayout( project_name =  selected )
                     open_app.update()
-
 
             except:
                 pass

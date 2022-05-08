@@ -7,7 +7,7 @@ from tkinter.constants import SEL, TRUE
 import PySimpleGUI as sg
 
 from libs.JSON import JsonClass
-
+from datetime import date, datetime
 from pprint import pprint, pformat
 from ast import literal_eval
 from PIL import Image
@@ -24,7 +24,8 @@ EXTENTION_IMG    = ".png"
 
 class NewCards():
     def __init__(self ):
-        sg.theme("Reddit")
+        sg.theme("Dark")
+        self.data_hor = datetime.now()
 
        
         #-----------------------------------------------------------------------------------------------
@@ -40,9 +41,16 @@ class NewCards():
         #----------- Layouts ----------------------------------------------------------------------------
        
         self.two_layouts = [                        
-                           
-                            #self.layoutText( text_str = "Titulo Project Name" , key_element = "_TEXT_")
-                            [sg.Input(key = "INPUT_TITULO") ],
+
+                            [sg.Text( "Tarefa / CardTask Name" , text_color = COLORS_APP["BRANCO_1"] , pad = 0 , background_color = self.background_color , font ='Any 10'),
+
+                            sg.Input( key = "INPUT_TITULO")  ],
+
+
+                            [sg.Input( key = "NAME_PERSONAL") ],
+
+                            [sg.Input( key = "INPUT_TITULO")  ],
+
                             [self.layoutButtons( text_button = "PLUS" , 
                                                 key_button  = "_BUTTON_PLUS_ADD_Titulo_2",
                                                 button_type = 7 ,
@@ -54,9 +62,9 @@ class NewCards():
                                                 button_size = (5 , 2) )],
 
 
-                            [sg.Multiline(  default_text     = "Digite Aqui",
+                            [sg.Multiline(  default_text     = "Digite_Aqui",
                                             autoscroll       = True , 
-                                            size             = (100, 8), 
+                                            size             = (20, 8),
                                             background_color = self.background_color ,
                                             text_color       = COLORS_APP["BRANCO_1"] , 
                                             key              = "MULT_DESCRIPTION")],
@@ -101,13 +109,11 @@ class NewCards():
 
         return buttons
 
-
     def coverResize(self, image_file_name , imagen_resize ):
         with Image.open( image_file_name ) as im:
             im_resized = im.resize(  imagen_resize  )
             return im_resized 
         pass
-
 
     def update(self):
         
@@ -117,24 +123,22 @@ class NewCards():
                 break
             
 
-            # PROJEOT CARDTASKS news
+            # Criando os valore para um novo CardTask ---------------------------
             if self.events == "_BUTTON_PLUS_ADD_Titulo_2":
                 self.title      = self.values["INPUT_TITULO"] 
                 self.img_path   = self.values["_BUTTON_GET_IMAGE_PATH"]
                 self.descritons = self.values["MULT_DESCRIPTION"]
 
-                imagem          = self.coverResize( image_file_name = self.img_path , imagen_resize = (147 , 131 ) )
+                imagem          = self.coverResize( image_file_name = self.img_path , imagen_resize = ( 60 , 60 ) )
                 imagem.save( fp = self.path_tasks_and_img[1] + str(self.title) + EXTENTION_IMG  ,  format = None)
-                #imagem.show()
+
 
                 self.img_path   = self.path_tasks_and_img[1] + str(self.title) + EXTENTION_IMG
-                
-                #self.saveValuesCardsTasks( name_json = self.title , text_desctions = self.descritons , img_path_dir = self.img_path  )
-
+ 
                 self.windons.close()
 
                 
-        return [self.title ,  self.descritons , self.img_path]
+        return [self.title ,  self.descritons ,  self.img_path , str( self.data_hor )]
 
 #app         = NewCards()
 #name_card   = app.update()
