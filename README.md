@@ -19,3 +19,21 @@ Para rodar o programar precisara ter instalado o python 3 com as bibliotecas,
 
 Creio que só esses mesmo, quando tiveres todos instalados, rode o init.py ele é o responsavel por iniciar toda a aplicação.
 Essa é a versão v_0.1.9 , inda irie fazer muitas melhorias.!
+
+---------------------------------------------------------------------------------
+Janela inicial, para criar projetos que contem varias tarefas :
+
+![Screenshot_1](https://user-images.githubusercontent.com/68930411/167277498-dcff8e0c-11fa-4aba-9e39-ea139e18bc2d.png)
+
+Digite o nome do projeto 
+
+![Screenshot_3](https://user-images.githubusercontent.com/68930411/167277506-d3826459-5261-41e3-a2ce-47d78c5a7907.png)
+
+---------------------------------------------------------------------------------
+Para criar um novo CardTask aperte PLUS que abria uma nova janela onde irás colocar o nome da tarefa 
+escolher no uma imagem (Aviso : nessa versão é obrigatorio escolher uma imagem se não ira ocorrer um erro de imagem não eoncontrada, mas será resolvido ) de tag e por fim uama descrição breve da tarefa e pronto um novo CardTask foi criando.
+
+![Screenshot_5](https://user-images.githubusercontent.com/68930411/167277573-b1c2ac96-bf2d-4052-a7fa-53bee967ea29.png)
+
+---------------------------------------------------------------------------------
+
