@@ -109,9 +109,8 @@ class AppLayout():
                             [self.layoutButtons( text_button = "PLUS" , key_button  = "_ADD_", 
                                                  button_type = 7      , button_size = (5 , 2) ),
 
-                            self.layoutButtons( text_button = "Conf" , key_button  = "_ADD_",
+                            self.layoutButtons( text_button = "Conf" , key_button  = "_CONFIGS_",
                                                  button_type = 7      , button_size = (5 , 2) )]
-
                             ]
 
 
@@ -162,7 +161,7 @@ class AppLayout():
                                         #vertical_alignment  = "center", 
                                         pad                 = 0   , 
                                         key                 = self.colunns_keys[3] ),
-
+                                        
                             ]
 
                         ]
@@ -312,6 +311,31 @@ class AppLayout():
 
 
         pass
+    
+    def functionsNextBackTasks(self, events_key_n_col , colunns_keys_add , colunn_keys_dell , values_list , name_key_widgets , widget  ):
+
+        if events_key_n_col == self.colunns_keys[ colunn_keys_dell ] :
+            
+            print( " aqui funcionando !?? ")
+
+            self.saveDatabaseCardsTasks( list_values = values_list , 
+                                        col_key_add = self.colunns_keys[ colunns_keys_add] , 
+                                        col_key_del = self.colunns_keys[ colunn_keys_dell ] )
+
+            self.windons[ self.colunns_keys[ colunns_keys_add ] ].Widget.update()
+            self.windons[ self.colunns_keys[ colunns_keys_add ] ].contents_changed()
+            
+            self.windons.extend_layout(  self.windons[ self.colunns_keys[ colunns_keys_add ] ] , 
+                                        self.newCardTask(   col_name        = self.colunns_keys[ colunns_keys_add ] , 
+                                                            title_card      = values_list[0] , 
+                                                            img_card        = values_list[2] , 
+                                                            descrtions_card = values_list[1] ,
+                                                            data_card       = values_list[3] ) )
+
+            del self.windons.AllKeysDict[ name_key_widgets]
+            self.deleteCardTask( widget.master )
+        
+        pass
 
     def update(self):
 
@@ -320,34 +344,29 @@ class AppLayout():
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
             
-            if self.index_col >= 3:
-                self.index_col = 4
-            
+           
+            if self.events == "_ADD_":
+
+                app_new_car      = NewCards()
+                card_list_values = app_new_car.update()
+
+                self.windons[ self.colunns_keys[0] ].Widget.update()
+                self.windons[ self.colunns_keys[0] ].contents_changed()
+
+                self.windons.extend_layout( self.windons[ self.colunns_keys[0] ] , 
+                                            self.newCardTask(   col_name        = self.colunns_keys[0] , 
+                                                                title_card      = card_list_values[0] , 
+                                                                img_card        = card_list_values[2] , 
+                                                                descrtions_card = card_list_values[1],
+                                                                data_card       = card_list_values[3] ) )
+                
+                self.list_load_data_cards[ self.colunns_keys[0] ].append( card_list_values )
+                self.saveValuesCardsTasks( value_list_database = self.list_load_data_cards )
+
 
             try :
-                if self.events == "_ADD_":
-                    self.index_col   = 0
-                    app_new_car      = NewCards()
-                    card_list_values = app_new_car.update()
-
-                    self.windons[ self.colunns_keys[0] ].Widget.update()
-                    self.windons[ self.colunns_keys[0] ].contents_changed()
-
-                    self.windons.extend_layout(  self.windons[ self.colunns_keys[0] ] , 
-                                                self.newCardTask(  col_name        = self.colunns_keys[0] , 
-                                                                    title_card      = card_list_values[0] , 
-                                                                    img_card        = card_list_values[2] , 
-                                                                    descrtions_card = card_list_values[1],
-                                                                    data_card       = card_list_values[3]
-                                                                        ) )
-                    
-                    self.list_load_data_cards[ self.colunns_keys[0] ].append( card_list_values )
-                    
-                    self.saveValuesCardsTasks( value_list_database = self.list_load_data_cards )
-
-
-            #----------------------------------------------------------------------
-            #----------------------------------------------------------------------
+                # AVANÇANDO OS CARDSTASKS PARA AS PROXIMAS COLUNAS  -----------------------------------------------
+                #---------------------------------------------------------------------------------------------------
 
                 if self.events[0] == "avancar":
 
@@ -355,80 +374,37 @@ class AppLayout():
                     events_key_n_col     = self.events[2]
                     events_key_name_card = self.events[3]
 
-
                     name_key_widgets = 'Frame' + str( events_key_n )
                     widget           = self.windons[ name_key_widgets ].Widget
 
                     card_values_load = JSLOAD.json_read( name_file = self.path_datasbase_cols )
                     values_list      = card_values_load[ events_key_n_col ][0]
 
+                    
+                    self.functionsNextBackTasks(events_key_n_col = events_key_n_col , 
+                                                colunns_keys_add = 1 , 
+                                                colunn_keys_dell = 0 ,
+                                                values_list      = values_list , 
+                                                name_key_widgets = name_key_widgets , 
+                                                widget           = widget )
 
-                    # AVANÇO DA COLUNA 1 PARA A 3 ----------------------------------------------------------------------
-                    #---------------------------------------------------------------------------------------------------
-                    if events_key_n_col == self.colunns_keys[0] :
+                    self.functionsNextBackTasks(events_key_n_col = events_key_n_col , 
+                                                colunns_keys_add = 2 , 
+                                                colunn_keys_dell = 1 ,
+                                                values_list      = values_list , 
+                                                name_key_widgets = name_key_widgets , 
+                                                widget           = widget )
+                    
+                    self.functionsNextBackTasks(events_key_n_col = events_key_n_col , 
+                                                colunns_keys_add = 3 , 
+                                                colunn_keys_dell = 2 ,
+                                                values_list      = values_list , 
+                                                name_key_widgets = name_key_widgets , 
+                                                widget           = widget )
+                    
 
-                        self.saveDatabaseCardsTasks( list_values = values_list , 
-                                                    col_key_add = self.colunns_keys[1] , 
-                                                    col_key_del = self.colunns_keys[0] )
-
-                        self.windons[ self.colunns_keys[1] ].Widget.update()
-                        self.windons[ self.colunns_keys[1] ].contents_changed()
-                        self.windons.extend_layout(  self.windons[ self.colunns_keys[1] ] , 
-                                                    self.newCardTask(   col_name        = self.colunns_keys[1] , 
-                                                                        title_card      = values_list[0] , 
-                                                                        img_card        = values_list[2] , 
-                                                                        descrtions_card = values_list[1] ,
-                                                                        data_card       = values_list[3] ) )
-
-                        del self.windons.AllKeysDict[ name_key_widgets]
-                        self.deleteCardTask( widget.master )
-
-
-                    # AVANÇO DA COLUNA 2 PARA A 3----------------------------------------------------------------------
-                    #---------------------------------------------------------------------------------------------------
-                    if events_key_n_col == self.colunns_keys[1]:
-                        
-                        self.saveDatabaseCardsTasks( list_values = values_list , 
-                                                    col_key_add = self.colunns_keys[2] , 
-                                                    col_key_del = self.colunns_keys[1] )
-
-                        self.windons[ self.colunns_keys[2] ].Widget.update()
-                        self.windons[ self.colunns_keys[2] ].contents_changed()
-
-                        self.windons.extend_layout(  self.windons[  self.colunns_keys[2] ] , 
-                                                    self.newCardTask(  col_name        = self.colunns_keys[2] , 
-                                                                        title_card      = values_list[0] , 
-                                                                        img_card        = values_list[2] , 
-                                                                        descrtions_card = values_list[1] ,
-                                                                        data_card       = values_list[3] ) )
-
-                        del self.windons.AllKeysDict[ name_key_widgets ]
-                        self.deleteCardTask( widget.master )
-
-                        
-                    # AVANÇO DA COLUNA 3 PARA A 4 ----------------------------------------------------------------------
-                    #---------------------------------------------------------------------------------------------------
-                    if events_key_n_col == self.colunns_keys[2]:
-
-                        self.saveDatabaseCardsTasks( list_values = values_list , 
-                                                    col_key_add = self.colunns_keys[3] , 
-                                                    col_key_del = self.colunns_keys[2] )
-
-                        self.windons[ self.colunns_keys[3] ].Widget.update()
-                        self.windons[ self.colunns_keys[3] ].contents_changed()
-
-                        self.windons.extend_layout(  self.windons[  self.colunns_keys[3] ] , 
-                                                    self.newCardTask(  col_name        = self.colunns_keys[3] , 
-                                                                        title_card      = values_list[0] , 
-                                                                        img_card        = values_list[2] , 
-                                                                        descrtions_card = values_list[1] ,
-                                                                        data_card       = values_list[3] 
-                                                                        ) )
-
-                        del self.windons.AllKeysDict[ name_key_widgets ]
-                        self.deleteCardTask( widget.master )
-                #---------------------------------------------------------------------------------------------------------
-
+                # VOLTANDO OS CARDSTASKS PARA COLUNAS ANTERIORES ---------------------------------------------------
+                #---------------------------------------------------------------------------------------------------
 
                 if self.events[0] == "voltar":
 
@@ -436,83 +412,39 @@ class AppLayout():
                     events_key_n_col     = self.events[2]
                     events_key_name_card = self.events[3]
 
-
                     name_key_widgets = 'Frame' + str( events_key_n )
                     widget           = self.windons[ name_key_widgets ].Widget
 
                     card_values_load = JSLOAD.json_read( name_file = self.path_datasbase_cols )
                     values_list      = card_values_load[ events_key_n_col ][0]
 
-
-                    # AVANÇO DA COLUNA 1 PARA A 3 ----------------------------------------------------------------------
-                    #---------------------------------------------------------------------------------------------------
-                    if events_key_n_col == self.colunns_keys[3] :
-
-                        self.saveDatabaseCardsTasks( list_values = values_list , 
-                                                    col_key_add = self.colunns_keys[2] , 
-                                                    col_key_del = self.colunns_keys[3] )
-
-                        self.windons[ self.colunns_keys[2] ].Widget.update()
-                        self.windons[ self.colunns_keys[2] ].contents_changed()
-                        self.windons.extend_layout(  self.windons[ self.colunns_keys[2] ] , 
-                                                    self.newCardTask(   col_name        = self.colunns_keys[2] , 
-                                                                        title_card      = values_list[0] , 
-                                                                        img_card        = values_list[2] , 
-                                                                        descrtions_card = values_list[1] ,
-                                                                        data_card       = values_list[3]   ) )
-
-                        del self.windons.AllKeysDict[ name_key_widgets]
-                        self.deleteCardTask( widget.master )
-
-
-                    # AVANÇO DA COLUNA 2 PARA A 3----------------------------------------------------------------------
-                    #---------------------------------------------------------------------------------------------------
-                    if events_key_n_col == self.colunns_keys[2]:
-                        
-                        self.saveDatabaseCardsTasks( list_values = values_list , 
-                                                    col_key_add = self.colunns_keys[1] , 
-                                                    col_key_del = self.colunns_keys[2] )
-
-                        self.windons[ self.colunns_keys[1] ].Widget.update()
-                        self.windons[ self.colunns_keys[1] ].contents_changed()
-
-                        self.windons.extend_layout(  self.windons[  self.colunns_keys[1] ] , 
-                                                    self.newCardTask(  col_name        = self.colunns_keys[1] , 
-                                                                        title_card      = values_list[0] , 
-                                                                        img_card        = values_list[2] , 
-                                                                        descrtions_card = values_list[1] ,
-                                                                        data_card       = values_list[3]  ) )
-
-                        del self.windons.AllKeysDict[ name_key_widgets ]
-                        self.deleteCardTask( widget.master )
-
-                        
-                    # AVANÇO DA COLUNA 3 PARA A 4 ----------------------------------------------------------------------
-                    #---------------------------------------------------------------------------------------------------
-                    if events_key_n_col == self.colunns_keys[1]:
-
-                        self.saveDatabaseCardsTasks( list_values = values_list , 
-                                                    col_key_add = self.colunns_keys[0] , 
-                                                    col_key_del = self.colunns_keys[1] )
-
-                        self.windons[ self.colunns_keys[0] ].Widget.update()
-                        self.windons[ self.colunns_keys[0] ].contents_changed()
-
-                        self.windons.extend_layout(  self.windons[  self.colunns_keys[0] ] , 
-                                                    self.newCardTask(  col_name        = self.colunns_keys[0] , 
-                                                                        title_card      = values_list[0] , 
-                                                                        img_card        = values_list[2] , 
-                                                                        descrtions_card = values_list[1] ,
-                                                                        data_card       = values_list[3] ) )
-
-                        del self.windons.AllKeysDict[ name_key_widgets ]
-                        self.deleteCardTask( widget.master )
-
+                  
+                    self.functionsNextBackTasks(events_key_n_col = events_key_n_col , 
+                                                colunns_keys_add = 2 , 
+                                                colunn_keys_dell = 3 ,
+                                                values_list      = values_list , 
+                                                name_key_widgets = name_key_widgets , 
+                                                widget           = widget )
+                    
+                    self.functionsNextBackTasks(events_key_n_col = events_key_n_col , 
+                                                colunns_keys_add = 1 , 
+                                                colunn_keys_dell = 2 ,
+                                                values_list      = values_list , 
+                                                name_key_widgets = name_key_widgets , 
+                                                widget           = widget )
+                    
+                    self.functionsNextBackTasks(events_key_n_col = events_key_n_col , 
+                                                colunns_keys_add = 0 , 
+                                                colunn_keys_dell = 1 ,
+                                                values_list      = values_list , 
+                                                name_key_widgets = name_key_widgets , 
+                                                widget           = widget )
 
 
                 # DELETAMENTO DOS CARDSTASKS -----------------------------------------------------------------------
                 #---------------------------------------------------------------------------------------------------
-                elif self.events[0] == 'X':
+
+                if self.events[0] == 'X':
                     i                    = self.events[1]
                     events_key_n_col     = self.events[2]
                     events_key_name_card = self.events[3]
@@ -538,9 +470,9 @@ class AppLayout():
 
 
             except TypeError as printErro:
-                print( f' Esse é o erro --> { printErro }')
+                #print( f' Esse é o erro --> { printErro }')
                 pass
-       
+
 
 
 #app = AppLayout()
