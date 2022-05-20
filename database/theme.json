@@ -1,0 +1,16 @@
+{
+    "Dark"  :   {
+                    "background_general"                : "#121212" ,
+                    "background_coluns_list_cards"      : [ "#1E1E1E" , "#3452eb" , "#34eb61" , "#8034eb" , "#eb9b34" ] ,
+                    "buttons_general"                   : "#4640D8" ,
+                    "texts_general"                     : "#FFFFFF",
+
+                    "background_cards_task"             : "#363636" ,
+                    "text_tittle_cards_task"            : "#FFFFFF" ,
+                    "texts_cards_task"                  : "#FFFFFF" ,
+                    "buttons_cards_task"                : [ "#FFFFFF" , "#4640D8" , "#FC825D" ],
+                    "line_card_task"                    : "#4640D8"
+                    
+                }
+
+}

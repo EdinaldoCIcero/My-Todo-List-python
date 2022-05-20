@@ -129,7 +129,13 @@ class NewCards():
                 self.img_path   = self.values["_BUTTON_GET_IMAGE_PATH"]
                 self.descritons = self.values["MULT_DESCRIPTION"]
 
-                imagem          = self.coverResize( image_file_name = self.img_path , imagen_resize = ( 60 , 60 ) )
+                data_today_card     = str(self.data_hor.day) + " / " +  str(self.data_hor.month) + " / " + str(self.data_hor.year)
+                hminseg             = self.data_hor.timetuple()
+                horas_min_seg       = str(hminseg[3]) + " : " + str(hminseg[4]) + " : " + str(hminseg[5]) 
+                data_hor_ms         = data_today_card + "\n" +  horas_min_seg 
+
+
+                imagem          = self.coverResize( image_file_name = self.img_path , imagen_resize = ( 80 , 80 ) )
                 imagem.save( fp = self.path_tasks_and_img[1] + str(self.title) + EXTENTION_IMG  ,  format = None)
 
 
@@ -138,7 +144,7 @@ class NewCards():
                 self.windons.close()
 
                 
-        return [self.title ,  self.descritons ,  self.img_path , str( self.data_hor )]
+        return [self.title ,  self.descritons ,  self.img_path , data_hor_ms ]
 
 #app         = NewCards()
 #name_card   = app.update()

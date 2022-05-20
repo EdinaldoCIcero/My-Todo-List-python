@@ -16,7 +16,6 @@ from ast import Pass, literal_eval
 from libs.JSON import JsonClass
 from libs.winTitle import WintTitle
 from main import AppLayout
-
 from datetime import date, datetime
 
 
@@ -25,7 +24,11 @@ JSLOAD           = JsonClass()
 
 COLORS_APP       = JSLOAD.json_read(name_file = "database/appColors" )
 THEME_APP_COLORS = JSLOAD.json_read(name_file = "database/themeApp" )
+THEMES_APP       = JSLOAD.json_read(name_file = "database/theme" )
+
+
 PROJECT_NAME     = JSLOAD.json_read(name_file = "database/projectName" )
+
 
 
 #-----------------------------------------------------------------------------------------------
@@ -33,17 +36,32 @@ class WindInitApp():
     def __init__(self ):
         sg.theme("Dark")
 
+        # THME MODE UI LEMENTS -------------------------------------------------------------------------
+
+        self.theme_mode         = "Dark"
+
+        self.background_color   = THEMES_APP[ self.theme_mode ]["background_general"]   
+
+
+
+
+
         #-----------------------------------------------------------------------------------------------
-        self.data_hor = datetime.now()
+        self.data_hor = datetime.now() 
+        self.horr = self.data_hor.timetuple()
         
+        print( self.data_hor.day , self.data_hor.month , self.data_hor.year , self.horr[3] , self.horr[4] , self.horr[5] )
+
         self.path_project_files_name  = [ "database/projects_datas/"]
 
         self.trava_comands      = True
         self.buttons_sizes      = (10 , 2)
-        self.background_color   = THEME_APP_COLORS["background"]
+
+        
+
         self.list_name_append   = [""]
 
-        self.HEADINGS           = [ " "*10 , "DATA" ]
+        self.HEADINGS           = [ "Projeto" + " "*20 , "Data" + " "*20 ]
         
         self.dict_name_project  = PROJECT_NAME
 
@@ -58,24 +76,42 @@ class WindInitApp():
                                 }
 
         #----------- Layouts ----------------------------------------------------------------------------
+        self.lay_buttons = [
+                            [self.layoutButtons( text_button = "Abrir projeto" , 
+                                                key_button  = "_BUTTON_OPEN_PROJECT_",
+                                                button_type = 7 ,
+                                                button_size = self.buttons_sizes )],
+
+                            [self.layoutButtons( text_button = "Novo projeto" , 
+                                                key_button  = "_BUTTON_NEW_PROJECT_DATA_",
+                                                button_type = 7 ,
+                                                button_size = self.buttons_sizes )
+                            ]
+                            ]
+
+        self.table_lay  = [
+                            [ self.tabelas( list_heanding     =  self.HEADINGS  , 
+                                            list_values_table =  PROJECT_NAME["NAME_PR"]  , 
+                                            key               =  "_TABLE_PROJECTS_") ]
+                            ]
+
         self.one_layouts = [                        
                             #self.layoutText( text_str = "Titulo Project Name" , key_element = "_TEXT_")
                             #[sg.Input(key = "INPUT_TITULO") ],
 
-                            [self.layoutButtons( text_button = "Abrir projeto" , 
-                                                key_button  = "_BUTTON_OPEN_PROJECT_",
-                                                button_type = 7 ,
-                                                button_size = self.buttons_sizes ),
+                            [
+                            sg.Column( self.lay_buttons, background_color = self.background_color , 
+                                                        pad = 10 ,
+                                                        expand_x = False, 
+                                                        expand_y = True  ),
+                            
+                            sg.Column( self.table_lay , background_color = self.background_color , 
+                                                        pad = 0 ,
+                                                        expand_x = True, 
+                                                        expand_y = True  )
+                            ]
 
-                            self.layoutButtons( text_button = "Novo projeto" , 
-                                                key_button  = "_BUTTON_NEW_PROJECT_DATA_",
-                                                button_type = 7 ,
-                                                button_size = self.buttons_sizes )
-                            ],
-
-                            [ self.tabelas( list_heanding     = self.HEADINGS  , 
-                                            list_values_table =  PROJECT_NAME["NAME_PR"]  , 
-                                            key               = "_TABLE_PROJECTS_") ]
+                            
 
                             ]
 
@@ -96,21 +132,23 @@ class WindInitApp():
     #-------------------------------------------------------------------------------------------------------------------------
     def tabelas( self , list_heanding , list_values_table , key ):
         
-        tablets = [sg.Table(
+        tablets = sg.Table(
                         values                  = list_values_table, 
                         headings                = list_heanding,
                         select_mode             = sg.TABLE_SELECT_MODE_BROWSE,
                         #change_submits          = False,
                         justification           = 'center',
-                        text_color              = COLORS_APP["SINZA_CLARO_1"],
-                        background_color        = COLORS_APP["BRANCO_2"],
-                        selected_row_colors     = (COLORS_APP["BRANCO_1"] , COLORS_APP["VERDE_CLARO"] ),
-                        header_background_color = COLORS_APP["AZUL_CLARO"],
-                        
+                        text_color              = THEMES_APP[ self.theme_mode ]["texts_general"] ,
+                        background_color        = THEMES_APP[ self.theme_mode ]["background_coluns_list_cards"][0],
+                        selected_row_colors     = ( THEMES_APP[ self.theme_mode ]["texts_general"] , THEMES_APP[ self.theme_mode ]["buttons_general"] ),
+                        header_background_color = THEMES_APP[ self.theme_mode ]["background_coluns_list_cards"][0],
+
+
+                        border_width            = False ,
                         enable_events           = True,
                         enable_click_events     = True,
                         bind_return_key         = True,
-                        alternating_row_color   = COLORS_APP["LARANJA"],
+                        alternating_row_color   = THEMES_APP[ self.theme_mode ]["background_coluns_list_cards"][0],
                         expand_x                = True,
                         expand_y                = True,
 
@@ -118,22 +156,27 @@ class WindInitApp():
                         key                     = key,
                         right_click_menu        = [ "menu" , ["Abrir" , "Excluir"] ],
                         pad                     = 0 ,
+                        
                         row_height              = 60 ,
                         col_widths              = [0 , 0, 0, 0],
                         hide_vertical_scroll    = True
-                    )]
+                    )
 
         return tablets
 
     #-------------------------------------------------------------------------------------------------------------------------
     def layoutButtons(self , text_button , key_button , button_type , button_size  ):
         
-        buttons  = sg.Button(  button_text           = text_button,
-                                button_color         = (self.background_color, COLORS_APP["AZUL_CLARO"]) ,
-                                button_type          = button_type ,
-                                s                    = button_size, 
-                                key                  = key_button ,
-                                border_width         = 0,
+        buttons  = sg.Button(   button_text             = text_button,
+                                button_color            = ( THEMES_APP[ self.theme_mode ]["texts_general"] ,  THEMES_APP[ self.theme_mode ]["buttons_general"] ) ,
+                                #disabled_button_color   = None,
+                                mouseover_colors        = (   THEMES_APP[ self.theme_mode ]["buttons_general"] , THEMES_APP[ self.theme_mode ]["texts_general"] ),
+
+                                button_type             = button_type ,
+                                s                       = button_size, 
+                                key                     = key_button ,
+                                pad                     = 5,
+                                border_width            = 0,
                                 #image_data              = base64.buttons_greens 
                     )
 
@@ -244,11 +287,17 @@ class WindInitApp():
                 self.deletElement( events = self.events  , table_key = "_TABLE_PROJECTS_"  , name_event = "Excluir" )
                 
                 if self.events == "_BUTTON_NEW_PROJECT_DATA_":
-                    new_project_wind = WintTitle()
-                    new_name_project = new_project_wind.update()
-                    self.saveProjectInListData( list_data_to_save = [ new_name_project , str( self.data_hor ) ] )
+                    new_project_wind    = WintTitle()
+                    new_name_project    = new_project_wind.update()
+                    data_today_card     = str(self.data_hor.day) + " / " +  str(self.data_hor.month) + " / " + str(self.data_hor.year)
+                    hminseg             = self.data_hor.timetuple()
+                    horas_min_seg       = str(hminseg[3]) + " : " + str(hminseg[4]) + " : " + str(hminseg[5]) 
+                    data_hor_ms         = data_today_card + "\n" +  horas_min_seg 
 
+                    if new_name_project != "":
+                        self.saveProjectInListData( list_data_to_save = [ new_name_project , data_hor_ms ] )
 
+                        
                 if self.events == "_BUTTON_OPEN_PROJECT_":
                     selected = self.selectElementTable( events =  self.events  , name_event = "_TABLE_PROJECTS_")
                     open_app = AppLayout( project_name =  selected )

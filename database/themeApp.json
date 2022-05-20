@@ -1,8 +1,19 @@
 {   
 
-    "background"    : "#1c1c1c",
-    "texts_titles"  : "#6b2bff",
-    "texts_tables"  : "#6b2bff"
+    "background"                : "#1c1c1c",
+    "texts_titles"              : "#6b2bff",
+    "texts_tables"              : "#6b2bff",
+    
+    "azul_background"           : "#2E3746",
+    "cards_background_1"        : "#373951",
+    "cards_background_2"        : "#3E405B",
+    "cards_buttons_azul_1"      : "#5561FF",
+    "lines_"                    : "#6E7198",
+    "verde_claro_1"             : "#68FCD6",
+    "branco_texts"              : "#FFFFFF",
+    "azul_claro_"               : "#5a7aff",
+    "branco_sinza_1"            : "#dedede",
+    "vermelho_1"                : "#eb3434"
 
 }
 
