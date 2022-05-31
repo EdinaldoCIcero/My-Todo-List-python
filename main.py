@@ -7,6 +7,7 @@ import shutil
 import json
 from tkinter.constants import SEL, TRUE
 from tkinter.tix import Tree
+
 import PySimpleGUI as sg
 
 from libs.JSON import JsonClass
@@ -17,6 +18,7 @@ from PIL import Image
 
 from libs.newCard import NewCards
 from datetime import date, datetime
+import elemtens_base64 as bs4
 
 #-----------------------------------------------------------------------------------------------
 JSLOAD              = JsonClass()
@@ -51,6 +53,7 @@ class AppLayout():
 
         # atributos e variaveeis -----------------------------------------------------------------------
         self.data_hor = datetime.now()
+
         self.name_proj           = project_name
         self.path_tasks_and_img  = [ "database/projects_datas/" , "database/projects_datas/tasksImages/" ]
         self.path_datasbase_cols = "database/projects_datas/" + self.name_proj 
@@ -280,72 +283,72 @@ class AppLayout():
         self.index      += 1
         back_color      = self.background_cardtask_color
 
+        data_today_card     = str(self.data_hor.day) + "/" +  str(self.data_hor.month) + "/" + str(self.data_hor.year)
+        hminseg             = self.data_hor.timetuple()
+        horas_min_seg       = str(hminseg[3]) + ":" + str(hminseg[4]) + ":" + str(hminseg[5] ) 
+        data_hor_ms         = data_today_card + horas_min_seg 
+
         # -------------------------------------------------------------------------------------------
-        lay_imagem   = [ [sg.Image( img_card , pad = 4 , size=( 80 , 80 ), key="IMG_") ] ]
+        lay_imagem   = [ [sg.Image( img_card , pad = 0 , size=( 71 , 60 ), key="IMG_") ] ]
                        
 
+
         layout_texts = [
-                        [ sg.Text( "Responsavel : "  , text_color = self.texts_cardtask_color , pad = 0 , background_color = back_color , expand_x = False ,  font ='Any 8'),
-                          sg.Text( "Nome"            , text_color = self.texts_cardtask_color , pad = 0 , background_color = back_color , expand_x = False , font ='Any 8' , key= "_NOME_P") ],
+                        [ sg.Text("Nome :" , text_color = self.texts_cardtask_color , pad = 0 , background_color = back_color , expand_x = False , font ='Any 10' , key= "_NOME_P") ],
                         
-                        [sg.Text(  "Data/Hora : \n" + data_card , text_color = self.texts_cardtask_color , pad = 0 , background_color = back_color , expand_x = False , font ='Any 8' , key= "_DATA_HORA_")],
-                        [sg.Text(  "Descrção "  , text_color = self.texts_cardtask_color  , pad = 0 , background_color = back_color ,expand_x = False , expand_y = True , font ='Any 8' , key= "_DESCRTION_")],
-                        [sg.Text(  descrtions_card , text_color = self.texts_cardtask_color , pad = 0 , background_color = back_color ,expand_x = False , expand_y = True , font ='Any 8' , key= "DESCRT_TEXT")]
-                        
+                        [sg.Text("Data/H:" + data_hor_ms , text_color = self.texts_cardtask_color , pad = 0 , background_color = back_color , expand_x = False , font ='Any 10' , key= "_DATA_HORA_")],
                         ]
-                        #"verde_claro_1"
+                      
+
+        layout_buttons3 = [  
+                            [ sg.Button( '' , key = ('voltar'   , self.index  , colunn_name , title_card ), 
+                                            button_color            = ( self.buttons_cardtask_color[0] ,  back_color ) ,
+                                            mouseover_colors        = ( self.buttons_cardtask_color[1] , self.buttons_cardtask_color[0] ), 
+                                            pad                     = 0 , 
+                                            #size                    = ( 2 , 1 ),
+                                            border_width            = 0 ,
+                                            image_data              = bs4.button_voltar
+                                            )],
+
+                            #sg.Push(background_color = back_color ),
+
+                            [sg.Button( '' , key = ('X'        , self.index  , colunn_name , title_card ) ,
+                                            button_color            = ( self.buttons_cardtask_color[0] ,  back_color ) ,
+                                            mouseover_colors        = ( self.buttons_cardtask_color[2] , self.buttons_cardtask_color[0] ), 
+                                            pad                     = 0 , 
+                                            #size                    = ( 2 , 1 ),
+                                            border_width            = 0,
+                                            image_data              = bs4.button_deletar )],
+
+                            #sg.Push(background_color = back_color ),
+
+                            [sg.Button( '' , key = ('avancar'  , self.index  , colunn_name , title_card ) ,
+                                            button_color            = ( self.buttons_cardtask_color[0] ,  back_color ) ,
+                                            mouseover_colors        = ( self.buttons_cardtask_color[1] , self.buttons_cardtask_color[0] ), 
+                                            pad                     = 0, 
+                                            #size                    = ( 2 , 1 ),
+                                            border_width            = 0,
+                                            image_data              = bs4.button_avancar )] 
+                            ] 
 
 
-        layout_buttons3 = [ ] 
-
-
+        tags        = [ [sg.Image( img_card , pad = 1 , size=( 57 , 15 ) ) ] ]
 
         full_layout = [ 
-                        [sg.Canvas(background_color = self.lines_cardtask_color , pad = 0 , size = ( 260 , 3 ) )] ,
+                        [sg.Canvas(background_color = self.lines_cardtask_color , pad = 0 , size = ( 314 , 2 ) )] ,
 
                         [
-                        sg.Column( lay_imagem       , background_color = back_color , pad = 0 ,expand_x = True, expand_y = True  ),
-                        #sg.Push(background_color = self.background_color ),
-                        sg.Column( layout_texts     , background_color = back_color , pad = 0 ,expand_x = True, expand_y = True  ),
-                        #sg.Column( layout_buttons3  , background_color = back_color , pad = 0 ,expand_x = True, expand_y = True  )
+                        sg.Column( lay_imagem       , background_color = back_color , pad = 0 ,expand_x = True, expand_y = False  ),
+
+                        sg.Column( layout_texts     , background_color = back_color , pad = 0 ,expand_x = True, expand_y = False  ),
+
+                        sg.Column( layout_buttons3  , background_color = back_color , pad = 0 ,expand_x = True, expand_y = False  )
                         ],
 
-                        [sg.Canvas(background_color = self.lines_cardtask_color , pad = 0 , size = ( 260 , 2 ) )] ,
+                        [sg.Canvas(background_color = self.lines_cardtask_color , pad = 0 , size = ( 314 , 2 ) )] ,
 
-                        [
-                        #sg.Push(background_color = back_color ),
-                        
-
-                        sg.Button( '<' , key = ('voltar'   , self.index  , colunn_name , title_card ), 
-                                        button_color            = ( self.buttons_cardtask_color[0] ,  self.buttons_cardtask_color[1] ) ,
-                                        mouseover_colors        = ( self.buttons_cardtask_color[1] , self.buttons_cardtask_color[0] ), 
-                                        pad                     = 1 , 
-                                        size                    = ( 2 , 1 ),
-                                        border_width            = 0 ),
-
-                        sg.Push(background_color = back_color ),
-
-                        sg.Button( 'X' , key = ('X'        , self.index  , colunn_name , title_card ) ,
-                                        button_color            = ( self.buttons_cardtask_color[0] ,  self.buttons_cardtask_color[2] ) ,
-                                        mouseover_colors        = ( self.buttons_cardtask_color[2] , self.buttons_cardtask_color[0] ), 
-                                        pad                     = 1 , 
-                                        size                    = ( 2 , 1 ),
-                                        border_width            = 0 ),
-
-                        sg.Push(background_color = back_color ),
-
-                        sg.Button( '>' , key = ('avancar'  , self.index  , colunn_name , title_card ) ,
-                                        button_color            = ( self.buttons_cardtask_color[0] ,  self.buttons_cardtask_color[1] ) ,
-                                        mouseover_colors        = ( self.buttons_cardtask_color[1] , self.buttons_cardtask_color[0] ), 
-                                        pad                     = 1, 
-                                        size                    = ( 2 , 1 ),
-                                        border_width            = 0 ),
-                        ] 
-
-
-
-                        
                       ]
+
 
 
         return [ # Frame do CARD em si  
@@ -354,7 +357,7 @@ class AppLayout():
                             font             = 'Any 15' ,
                             title_color      = self.titlle_texts_cardtask_color,
                             background_color = back_color ,
-                            size             = ( 260 , 160 ),
+                            size             = ( 314 , 135 ),
                             border_width     = 0,
                             pad              = 2,
                             expand_x         = True,
@@ -435,7 +438,7 @@ class AppLayout():
 
     def update(self):
         while True:
-            self.events , self.values = self.windons.Read( close = True ) #timeout=10
+            self.events , self.values = self.windons.Read( close = False ) #timeout=10
             if self.values == sg.WIN_CLOSED or self.values == "Sair":
                 break
 
@@ -461,7 +464,7 @@ class AppLayout():
             try :
                 # AVANÇANDO OS CARDSTASKS PARA AS PROXIMAS COLUNAS -----------------------------------------------
                 #---------------------------------------------------------------------------------------------------
-
+                
                 if self.events[0] == "avancar":
 
                     events_key_n         = self.events[1]
@@ -512,7 +515,7 @@ class AppLayout():
                     card_values_load = JSLOAD.json_read( name_file = self.path_datasbase_cols )
                     values_list      = card_values_load[ events_key_n_col ][0]
 
-                  
+                    
                     self.functionsNextBackTasks(events_key_n_col = events_key_n_col , 
                                                 colunns_keys_add = 2 , 
                                                 colunn_keys_dell = 3 ,

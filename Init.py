@@ -1,5 +1,4 @@
-from cProfile import run
-from hashlib import new
+
 import os
 from random import randint
 import sys
@@ -7,6 +6,7 @@ import shutil
 import json
 from tkinter.constants import SEL, TRUE
 from traceback import print_tb
+
 import PySimpleGUI as sg
 
 from pprint import pprint, pformat
