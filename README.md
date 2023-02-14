@@ -23,7 +23,7 @@ Essa é a versão v_0.2.0 , talvez pretendo futuramente fazer melhorias no soft.
 ---------------------------------------------------------------------------------
 Janela inicial, para criar projetos que contem varias tarefas :
 
-![Screenshot_1](imgs\prints\Screenshot_1.png)
+![Screenshot_1](imgs/prints/Screenshot_1.png)
 
 
 Inteface atual do software.
