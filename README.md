@@ -28,7 +28,7 @@ Janela inicial, para criar projetos que contem varias tarefas :
 
 Inteface atual do software.
 
-![Screenshot_3](imgs\prints\Screenshot.png)
+![Screenshot_3](https://github.com/EdinaldoCIcero/My-Todo-List-python/blob/f774dcf27ee1c2cf6abb8448024a19cefad303a5/imgs/prints/Screenshot.png)
 
 ---------------------------------------------------------------------------------
 Para criar um novo CardTask aperte PLUS que abria uma nova janela onde irás colocar o nome da tarefa 
