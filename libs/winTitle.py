@@ -47,9 +47,9 @@ class WintTitle():
         #-------------------------------------------------------------------------------------------------------------------
         layouts_dicts = {   "LAYOUT_APP_INIT_PROJECTS_LIST" : [] , "LAYOUT_APP_TABLES_TASKS" : []  }
 
-        self.windons  = sg.Window( "TITLE",
+        self.windons  = sg.Window( "Projwct Name",
                                     background_color        = self.background_color,
-                                    size                    = (640 , 480) ,
+                                    size                    = ( 340 , 100) ,
                                     #icon                = "Icon.ico",
                                     #titlebar_icon       = base64.icone , 
                                     #use_custom_titlebar = False ,
@@ -59,6 +59,7 @@ class WintTitle():
 
                                     ).layout( self.one_layouts )
 
+    #---------------------------------------------------------------------------------------------
 
     def layoutButtons(self , text_button , key_button , button_type , button_size):
         buttons = sg.Button(   button_text           = text_button,
@@ -72,6 +73,7 @@ class WintTitle():
                      
 
         return buttons
+    #---------------------------------------------------------------------------------------------
 
     def coverResize(self, image_file_name , imagen_resize ):
         
@@ -80,8 +82,7 @@ class WintTitle():
 
             return im_resized 
         pass
-
-
+    #---------------------------------------------------------------------------------------------
     def update(self):
         
         while True:
@@ -96,7 +97,7 @@ class WintTitle():
                 self.windons.close()
 
                 
-        return self.title  
+        return self.title
 
 
 #app = WintTitle()

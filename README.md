@@ -1,39 +1,45 @@
 # My-Todo-List-python
-### Esta em desenvolvimento.
 
-## O que é o My-todo-List ?
-Ainda em inicio de desenvolvimento será um programa com a mesma funcionalidade do famoso PIPEFY só que offline
-e mais simples sem até o sistema de Drag and Drop, porém eficaz para listar as tarefas no decorrer do desenvolvimento dos seus projetos, dividindo o processo em 3 etapas Inicio, Desenvolvimento e Fim sendo elas:
+> ## O que é o My-todo-List ?
+My todo list é um software feito totalmente em python para fins academicos com a mesma ideia do PIPEFY só que offline e mais simples.
+Porém eficaz para listar as tarefas no decorrer do desenvolvimento dos seus projetos, dividindo o processo em 3 etapas Inicio, Desenvolvimento e Fim sendo elas:
 
-    1. Tarefas Iniciais             = Fazer 
-    1. Tarefas em desenvolvimento   = Fazendo 
-    1. Tarefas em Aprovação         = Apovação 
-    1. Tarefas Finalizadas          = Finalizados
 
--------------------------------------------------------------------------------
+> - Tarefas Iniciais             = Fazer 
+> - Tarefas em desenvolvimento   = Fazendo 
+> - Tarefas em Aprovação         = Apovação 
+> - Tarefas Finalizadas          = Finalizados
+
+---------------------------------------------------------
 Para rodar o programar precisara ter instalado o python 3 com as bibliotecas,
 
-    1. PySimpleGui
-    1. Pillow
-    1. Json
+> - PySimpleGui
+> - Pillow
+> - Json
 
 Creio que só esses mesmo, quando tiveres todos instalados, rode o init.py ele é o responsavel por iniciar toda a aplicação.
-Essa é a versão v_0.1.9 , inda irie fazer muitas melhorias.!
+Essa é a versão v_0.2.0 , talvez pretendo futuramente fazer melhorias no soft.
 
 ---------------------------------------------------------------------------------
 Janela inicial, para criar projetos que contem varias tarefas :
 
-![Screenshot_1](https://user-images.githubusercontent.com/68930411/167277498-dcff8e0c-11fa-4aba-9e39-ea139e18bc2d.png)
+![Screenshot_1](imgs\prints\Screenshot_1.png)
 
-Digite o nome do projeto 
 
-![Screenshot_3](https://user-images.githubusercontent.com/68930411/167277506-d3826459-5261-41e3-a2ce-47d78c5a7907.png)
+Inteface atual do software.
+
+![Screenshot_3](imgs\prints\Screenshot.png)
 
 ---------------------------------------------------------------------------------
 Para criar um novo CardTask aperte PLUS que abria uma nova janela onde irás colocar o nome da tarefa 
 escolher no uma imagem (Aviso : nessa versão é obrigatorio escolher uma imagem se não ira ocorrer um erro de imagem não eoncontrada, mas será resolvido ) de tag e por fim uama descrição breve da tarefa e pronto um novo CardTask foi criando.
 
-![Screenshot_5](https://user-images.githubusercontent.com/68930411/167277573-b1c2ac96-bf2d-4052-a7fa-53bee967ea29.png)
-
 ---------------------------------------------------------------------------------
 
+> ## Atualizações in offline
+
+Nova atualização pronta e funcional, bugs de atualização das listas após o deletamento e transição dos cards entre as lista foi resolvido, agora é melhorar o visual e adicioanr mais elementos sendo eles o sistema de adcionamento de tags nos cards facilitando assim a indentificação do tipo da tarefa e outros.
+
+
+> ### Aviso
+Não esta mas em desenvolvimento, pois sua finalidade inicial foi para estudos, porém quem sabe futuramente se venha atualizações ao proprio.

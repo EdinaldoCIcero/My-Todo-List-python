@@ -10,7 +10,5 @@
                     "texts_cards_task"                  : "#FFFFFF" ,
                     "buttons_cards_task"                : [ "#FFFFFF" , "#4640D8" , "#FC825D" ],
                     "line_card_task"                    : "#4640D8"
-                    
                 }
-
 }
